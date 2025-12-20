@@ -1,7 +1,7 @@
 package com.xtrarust.cloud.auth.security.authentication.handler;
 
-import com.xtrarust.cloud.auth.common.enums.SecurityErrorCode;
-import com.xtrarust.cloud.common.pojo.R;
+import com.xtrarust.cloud.common.domain.R;
+import com.xtrarust.cloud.common.exception.errorcode.BaseErrorCode;
 import com.xtrarust.cloud.common.util.servlet.ServletUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -29,7 +29,7 @@ public class RestSimpleAuthenticationFailureHandler implements AuthenticationFai
         }
 
         // response.setStatus(HttpStatus.UNAUTHORIZED.value());
-        ServletUtils.writeJSON(response, R.failed(SecurityErrorCode.UNAUTHORIZED.getCode(), exception.getMessage()));
+        ServletUtils.writeJSON(response, R.failed(BaseErrorCode.UNAUTHORIZED.getCode(), exception.getMessage()));
     }
 
 }

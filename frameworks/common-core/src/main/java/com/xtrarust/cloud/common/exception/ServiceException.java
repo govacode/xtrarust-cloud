@@ -5,7 +5,7 @@ import com.xtrarust.cloud.common.exception.errorcode.IErrorCode;
 /**
  * 业务逻辑异常
  */
-public class ServiceException extends AbstractException {
+public class ServiceException extends BaseException {
 
     public ServiceException(IErrorCode errorCode) {
         this(errorCode, null, null);

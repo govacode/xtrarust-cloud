@@ -1,7 +1,7 @@
 package com.xtrarust.cloud.common.util.object;
 
 import cn.hutool.core.bean.BeanUtil;
-import com.xtrarust.cloud.common.pojo.PageResult;
+import com.xtrarust.cloud.common.domain.PageResult;
 import com.xtrarust.cloud.common.util.collection.CollectionUtils;
 
 import java.util.List;

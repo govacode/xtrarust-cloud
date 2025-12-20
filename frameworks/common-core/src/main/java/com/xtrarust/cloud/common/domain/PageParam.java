@@ -1,4 +1,4 @@
-package com.xtrarust.cloud.common.pojo;
+package com.xtrarust.cloud.common.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;

@@ -1,6 +1,6 @@
 package com.xtrarust.cloud.auth.security.authentication.handler;
 
-import com.xtrarust.cloud.common.pojo.R;
+import com.xtrarust.cloud.common.domain.R;
 import com.xtrarust.cloud.common.util.servlet.ServletUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

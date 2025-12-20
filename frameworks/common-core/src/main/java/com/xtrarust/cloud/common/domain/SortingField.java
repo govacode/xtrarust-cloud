@@ -1,4 +1,4 @@
-package com.xtrarust.cloud.common.pojo;
+package com.xtrarust.cloud.common.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

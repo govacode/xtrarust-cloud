@@ -5,7 +5,7 @@ import com.xtrarust.cloud.common.exception.errorcode.IErrorCode;
 /**
  * 客户端异常
  */
-public class ClientException extends AbstractException {
+public class ClientException extends BaseException {
 
     public ClientException(IErrorCode errorCode) {
         this(errorCode, null, null);

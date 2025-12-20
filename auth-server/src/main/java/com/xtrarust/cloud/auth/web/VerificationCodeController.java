@@ -5,7 +5,7 @@ import com.xtrarust.cloud.auth.domain.request.SmsCodeReq;
 import com.xtrarust.cloud.auth.security.authentication.sms.SmsCodeService;
 import com.xtrarust.cloud.auth.service.CaptchaService;
 import com.wf.captcha.base.Captcha;
-import com.xtrarust.cloud.common.pojo.R;
+import com.xtrarust.cloud.common.domain.R;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;

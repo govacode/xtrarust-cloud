@@ -1,10 +1,10 @@
-package com.xtrarust.cloud.common.pojo;
+package com.xtrarust.cloud.common.domain;
 
+import cn.hutool.core.lang.Assert;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.xtrarust.cloud.common.exception.AbstractException;
+import com.xtrarust.cloud.common.exception.errorcode.IErrorCode;
 import lombok.Data;
 import lombok.experimental.Accessors;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -49,8 +49,9 @@ public class R<T> implements Serializable {
         return new R<T>().setCode(SUCCESS.getCode()).setMessage(Objects.toString(message, SUCCESS.getMessage())).setData(data);
     }
 
-    public static <T> R<T> failed(AbstractException e) {
-        return new R<T>().setCode(e.getErrorCode()).setMessage(e.getMessage());
+    public static <T> R<T> failed(IErrorCode errorCode) {
+        Assert.isTrue(errorCode != null && errorCode != SUCCESS);
+        return new R<T>().setCode(errorCode.getCode()).setMessage(errorCode.getMessage());
     }
 
     public static <T> R<T> failed(String code, String message) {

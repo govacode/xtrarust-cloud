@@ -5,7 +5,7 @@ import com.xtrarust.cloud.common.exception.errorcode.IErrorCode;
 /**
  * 远程服务调用异常
  */
-public class RemoteException extends AbstractException {
+public class RemoteException extends BaseException {
 
     public RemoteException(IErrorCode errorCode) {
         this(errorCode, null, null);

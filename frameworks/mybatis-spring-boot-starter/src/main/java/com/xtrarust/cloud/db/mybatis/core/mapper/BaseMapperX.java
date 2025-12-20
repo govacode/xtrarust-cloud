@@ -11,10 +11,10 @@ import com.baomidou.mybatisplus.extension.toolkit.Db;
 import com.github.yulichang.base.MPJBaseMapper;
 import com.github.yulichang.interfaces.MPJBaseJoin;
 import com.github.yulichang.wrapper.MPJLambdaWrapper;
-import com.xtrarust.cloud.common.pojo.PageParam;
-import com.xtrarust.cloud.common.pojo.PageResult;
-import com.xtrarust.cloud.common.pojo.SortablePageParam;
-import com.xtrarust.cloud.common.pojo.SortingField;
+import com.xtrarust.cloud.common.domain.PageParam;
+import com.xtrarust.cloud.common.domain.PageResult;
+import com.xtrarust.cloud.common.domain.SortablePageParam;
+import com.xtrarust.cloud.common.domain.SortingField;
 import com.xtrarust.cloud.db.mybatis.core.util.MyBatisUtils;
 import org.apache.ibatis.annotations.Param;
 

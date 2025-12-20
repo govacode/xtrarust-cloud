@@ -13,13 +13,13 @@ import lombok.Getter;
  * @see RemoteException
  */
 @Getter
-public abstract class AbstractException extends RuntimeException {
+public abstract class BaseException extends RuntimeException {
 
     public final String errorCode;
 
     private final Object[] args;
 
-    public AbstractException(IErrorCode errorCode, Throwable throwable, Object[] args) {
+    public BaseException(IErrorCode errorCode, Throwable throwable, Object[] args) {
         super(errorCode.getMessage(), throwable);
         this.errorCode = errorCode.getCode();
         this.args = args;
