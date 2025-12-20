@@ -2,7 +2,7 @@ spring:
   data:
     redis:
       connect-timeout: 10s
-      timeout: 3s
+      timeout: 10s
       username: default
       password: 123456
       cluster:
@@ -44,7 +44,7 @@ redisson:
     slave-connection-minimum-idle-size: 24
     slave-connection-pool-size: 64
     master-connection-minimum-idle-size: 24
-    master-connection-pool-size: 24
+    master-connection-pool-size: 64
     idle-connection-timeout: 10_000
     retry-attempts: 3
     retry-interval: 1500

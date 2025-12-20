@@ -45,7 +45,6 @@ import java.time.Duration;
 @EnableConfigurationProperties(RedissonProperties.class)
 public class CloudRedisAutoConfiguration {
 
-    // Redisson自动配置定制化器
     @Bean
     public RedissonAutoConfigurationCustomizer redissonAutoConfigurationCustomizer(ObjectMapper objectMapper,
                                                                                    RedissonProperties redissonProperties) {
@@ -152,7 +151,7 @@ public class CloudRedisAutoConfiguration {
 
         public KeyPrefixNameMapper(String keyPrefix) {
             //前缀为空 则返回空前缀
-            this.keyPrefix = StringUtils.isBlank(keyPrefix) ? "" : keyPrefix + ":";
+            this.keyPrefix = StringUtils.isBlank(keyPrefix) ? StringUtils.EMPTY : keyPrefix + ":";
         }
 
         /**

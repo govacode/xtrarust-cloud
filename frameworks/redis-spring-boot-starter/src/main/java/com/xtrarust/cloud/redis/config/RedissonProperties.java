@@ -16,7 +16,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 public class RedissonProperties {
 
     /**
-     * redis缓存key前缀
+     * redis key前缀
      */
     private String keyPrefix = "";
 
