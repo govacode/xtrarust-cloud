@@ -1,0 +1,26 @@
+server:
+  port: 9001
+spring:
+  application:
+    name: @artifactId@
+  profiles:
+    active: @profiles.active@
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  cloud:
+    nacos:
+      server-addr: @nacos.server@
+      username: @nacos.username@
+      password: @nacos.password@
+      discovery:
+        group: @nacos.discovery.group@
+        namespace: @nacos.discovery.namespace@
+      config:
+        group: @nacos.config.group@
+        namespace: @nacos.config.namespace@
+        file-extension: yml
+#  config:
+#    import:
+#      - optional:nacos:application-${spring.profiles.active}.yml
+#      - optional:nacos:${spring.application.name}-${spring.profiles.active}.yml

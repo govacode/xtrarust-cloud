@@ -1,0 +1,2 @@
+com.xtrarust.cloud.sharding.sharding.OrderDBComplexKeysShardingAlgorithm
+com.xtrarust.cloud.sharding.sharding.OrderTableComplexKeysShardingAlgorithm

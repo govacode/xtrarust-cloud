@@ -1,0 +1,16 @@
+management:
+  endpoints:
+    web:
+      base-path: '/actuator'
+      exposure:
+        # 暴露 prometheus 端点，也可以用 "*" 暴露所有
+        include: 'prometheus,health,info'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+  endpoint:
+    health:
+      show-details: ALWAYS
+    prometheus:
+      enabled: true

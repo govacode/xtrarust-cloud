@@ -1,0 +1,27 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.xtrarust.cloud</groupId>
+        <artifactId>xtrarust-cloud</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>frameworks</artifactId>
+    <description>技术组件</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>common-bom</module>
+        <module>common-core</module>
+        <module>id-spring-boot-starter</module>
+        <module>web-spring-boot-starter</module>
+        <module>redis-spring-boot-starter</module>
+        <module>mybatis-spring-boot-starter</module>
+        <module>job-spring-boot-starter</module>
+        <module>sms-spring-boot-starter</module>
+        <module>prometheus-spring-starter</module>
+        <module>oss-spring-boot-starter</module>
+    </modules>
+</project>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <link rel="stylesheet" th:href="@{/layui/css/layui.css}">
+    <style>
+        body {
+            background-image: url('[[@{/images/background.svg}]]');
+            background-size: cover;
+        }
+
+        .login-main {
+            width: 320px;
+            margin: 150px auto 0;
+            padding: 30px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 5px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .login-title {
+            text-align: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .captcha-img {
+            float: right;
+            width: 120px;
+            height: 38px;
+            cursor: pointer;
+            border: 1px solid #e6e6e6;
+            background-color: #f7f7f7;
+            /* 确保在 flex 布局中不被压缩 */
+            flex-shrink: 0;
+        }
+        #sendSmsBtn {
+            margin-left: 0px;
+            /* 确保在 flex 布局中不被压缩 */
+            flex-shrink: 0;
+        }
+
+        .login-other .layui-icon {
+            position: relative;
+            display: inline-block;
+            margin: 0 2px; top: 2px;
+            font-size: 20px;
+        }
+
+        @media screen and (max-width: 500px) {
+            body {
+                /* 手机上不使用 fixed 背景图，防止卡顿 */
+                background-attachment: scroll;
+            }
+            .login-main {
+                width: 90% !important; /* 覆盖桌面固定宽度 */
+                margin: 30px auto 30px; /* 调整手机上边距 */
+                padding: 15px; /* 减小内边距 */
+                box-shadow: none; /* 手机上可以去掉阴影 */
+            }
+            .login-title {
+                font-size: 20px;
+                margin-bottom: 15px;
+            }
+            .captcha-img {
+                width: 100px; /* 手机上验证码图片可以窄一些 */
+                height: 34px;
+            }
+            #sendSmsBtn {
+                height: 34px; /* 保持一致高度 */
+                line-height: 34px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-main">
+    <div class="login-title">Auth Server</div>
+
+    <div class="layui-tab layui-tab-brief" lay-filter="loginTab">
+        <ul class="layui-tab-title">
+            <li class="layui-this">账号密码登录</li>
+            <li>短信验证码登录</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form" action="/login/pwd" method="post" id="pwdForm">
+                    <div class="layui-form-item">
+                        <div class="layui-input-wrap">
+                            <div class="layui-input-prefix">
+                                <i class="layui-icon layui-icon-username"></i>
+                            </div>
+                            <input type="text" name="username" value="" lay-verify="required" placeholder="用户名" lay-reqtext="请填写用户名" autocomplete="off" class="layui-input" lay-affix="clear">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-wrap">
+                            <div class="layui-input-prefix">
+                                <i class="layui-icon layui-icon-password"></i>
+                            </div>
+                            <input type="password" name="password" value="" lay-verify="required" placeholder="密   码" lay-reqtext="请填写密码" autocomplete="off" class="layui-input" lay-affix="eye">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-xs7">
+                                <div class="layui-input-wrap">
+                                    <div class="layui-input-prefix">
+                                        <i class="layui-icon layui-icon-vercode"></i>
+                                    </div>
+                                    <input type="text" name="captcha" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input" lay-affix="clear">
+                                </div>
+                            </div>
+                            <div class="layui-col-xs5">
+                                <div style="margin-left: 10px;">
+                                    <img id="captchaImg" class="captcha-img" th:src="@{/code/captcha}" onclick="refreshCaptcha()">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <input type="checkbox" name="remember-me" lay-skin="primary" title="记住我">
+                        <a th:href="@{#forget}" style="float: right; margin-top: 7px;">忘记密码？</a>
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login_pwd">登录</button>
+                    </div>
+                    <div class="layui-form-item login-other">
+                        <label>社交账号登录</label>
+                        <span style="padding: 0 21px 0 6px;">
+                                <a th:href="@{/oauth2/authorization/qq}">
+                                    <i class="layui-icon layui-icon-login-qq" style="color: #3492ed;"></i>
+                                </a>
+                                <a th:href="@{/oauth2/authorization/wechat}">
+                                    <i class="layui-icon layui-icon-login-wechat" style="color: #4daf29;"></i>
+                                </a>
+                                <a th:href="@{/oauth2/authorization/weibo}">
+                                    <i class="layui-icon layui-icon-login-weibo" style="color: #cf1900;"></i>
+                                </a>
+                                <a th:href="@{/oauth2/authorization/gitee}">
+                                    <i class="layui-icon layui-icon-gitee" style="color: #cf1900;"></i>
+                                </a>
+                            </span>
+                        或 <a th:href="@{#reg}">注册帐号</a>
+                    </div>
+                </form>
+            </div>
+
+            <div class="layui-tab-item">
+                <form class="layui-form" action="/login/sms" method="post" id="smsForm">
+                    <div class="layui-form-item">
+                        <div class="layui-row">
+                            <div class="layui-col-xs7">
+                                <div class="layui-input-wrap">
+                                    <div class="layui-input-prefix">
+                                        <i class="layui-icon layui-icon-cellphone"></i>
+                                    </div>
+                                    <input type="text" name="mobile" value="" lay-verify="required|phone" placeholder="手机号" lay-reqtext="请填写手机号" autocomplete="off" class="layui-input" id="mobile">
+                                </div>
+                            </div>
+                            <div class="layui-col-xs5">
+                                <div style="margin-left: 11px;">
+                                    <button type="button" class="layui-btn layui-btn-fluid layui-btn-primary" id="sendSmsBtn">获取验证码</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-wrap">
+                            <div class="layui-input-prefix">
+                                <i class="layui-icon layui-icon-vercode"></i>
+                            </div>
+                            <input type="text" name="smsCode" value="" lay-verify="required" placeholder="验证码" lay-reqtext="请填写验证码" autocomplete="off" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="login_sms">登录</button>
+                    </div>
+                    <div class="layui-form-item login-other">
+                        <label>社交账号登录</label>
+                        <span style="padding: 0 21px 0 6px;">
+                                <a th:href="@{/oauth2/authorization/qq}">
+                                    <i class="layui-icon layui-icon-login-qq" style="color: #3492ed;"></i>
+                                </a>
+                                <a th:href="@{/oauth2/authorization/wechat}">
+                                    <i class="layui-icon layui-icon-login-wechat" style="color: #4daf29;"></i>
+                                </a>
+                                <a th:href="@{/oauth2/authorization/weibo}">
+                                    <i class="layui-icon layui-icon-login-weibo" style="color: #cf1900;"></i>
+                                </a>
+                                <a th:href="@{/oauth2/authorization/gitee}">
+                                    <i class="layui-icon layui-icon-gitee" style="color: #cf1900;"></i>
+                                </a>
+                            </span>
+                        或 <a th:href="@{#reg}">注册帐号</a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script th:src="@{/layui/layui.js}"></script>
+<script>
+    layui.use(['form', 'element', 'jquery', 'layer'], function(){
+        var $ = layui.$;
+        var form = layui.form;
+        var layer = layui.layer;
+
+        window.refreshCaptcha = function() {
+            $('#captchaImg').attr('src', '/code/captcha?t=' + new Date().getTime());
+        };
+        refreshCaptcha();
+
+        var smsCountdown = 60; // 倒计时秒数
+        var $sendBtn = $('#sendSmsBtn');
+        var isCounting = false; // 状态锁
+
+        function startSmsCountdown() {
+            isCounting = true;
+            if (smsCountdown === 0) {
+                $sendBtn.text('获取验证码').removeAttr('disabled').removeClass('layui-btn-disabled');
+                smsCountdown = 60;
+                isCounting = false;
+                return;
+            } else {
+                $sendBtn.attr('disabled', true).addClass('layui-btn-disabled');
+                $sendBtn.text('重新发送 (' + smsCountdown + 's)');
+                smsCountdown--;
+            }
+            setTimeout(function() { startSmsCountdown(); }, 1000);
+        }
+
+        $sendBtn.on('click', function() {
+            if (isCounting) return;
+            var isvalid = form.validate('#mobile');
+            if (!isvalid) {
+                layer.msg('请输入正确的手机号', {icon: 5});
+                return;
+            }
+
+            var mobile = $('input[name="mobile"]').val();
+            var csrfToken = $("meta[name='_csrf']").attr("content");
+            var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+            $.ajax({
+                url: '/code/sms',
+                type: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                dataType: 'json',
+                data: JSON.stringify({ mobile: mobile }),
+                success: function(res) {
+                    if (res.code === "success") {
+                        layer.msg('短信发送成功！', {icon: 6});
+                        startSmsCountdown();
+                    } else {
+                        layer.msg('短信发送失败，请重试', {icon: 5});
+                    }
+                },
+                error: function() {
+                    layer.msg('网络请求失败', {icon: 5});
+                }
+            });
+        });
+
+        form.on('submit(login_pwd)', function(data) {
+            var actionUrl = $("#pwdForm").attr("action");
+            var csrfToken = $("meta[name='_csrf']").attr("content");
+            var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                data: JSON.stringify(data.field),
+                success: function(res) {
+                    if (res.code === "success") {
+                        layer.msg('登录成功', {icon: 6});
+                        window.location.href = res.data.targetUrl;
+                    } else {
+                        layer.msg(res.message, {icon: 5});
+                        refreshCaptcha();
+                    }
+                },
+                error: function() {
+                    layer.msg('网络请求失败', {icon: 5});
+                    refreshCaptcha();
+                }
+            });
+            return false;
+        });
+
+        form.on('submit(login_sms)', function(data) {
+            var actionUrl = $("#smsForm").attr("action");
+            var csrfToken = $("meta[name='_csrf']").attr("content");
+            var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+            $.ajax({
+                url: actionUrl,
+                type: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    [csrfHeader]: csrfToken
+                },
+                data: JSON.stringify(data.field),
+                success: function(res) {
+                    if (res.code === "success") {
+                        layer.msg('登录成功', {icon: 6});
+                        window.location.href = res.data.targetUrl;
+                    } else {
+                        layer.msg(res.message, {icon: 5});
+                    }
+                },
+                error: function() {
+                    layer.msg('网络请求失败', {icon: 5});
+                }
+            });
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>

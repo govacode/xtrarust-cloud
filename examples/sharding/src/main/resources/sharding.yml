@@ -1,0 +1,199 @@
+databaseName: db_order
+# 元数据持久化 https://shardingsphere.apache.org/document/current/cn/user-manual/common-config/builtin-algorithm/metadata-repository/
+# 可选插件 https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/optional-plugins/
+mode:
+  type: Standalone
+  repository:
+    type: Memory
+# 数据源配置
+# https://shardingsphere.apache.org/document/5.3.2/cn/user-manual/shardingsphere-jdbc/yaml-config/data-source/
+dataSources:
+  # 主数据源 m_order0
+  m_order0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/db_order0?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: root
+    password: root@123
+    hikari:
+      pool-name: HikariCP-m-order0
+      connection-timeout: 30_000
+      idle-timeout: 300_000
+      max-lifetime: 900_000
+      leak-detection-threshold: 60_000
+      minimum-idle: 10
+      maximum-pool-size: 50
+      connection-test-query: SELECT 1
+      prepStmtCacheSize: 300
+      prepStmtCacheSqlLimit: 2048
+      cachePrepStmts: true
+      useServerPrepStmts: true
+  # 主数据源 m_order1
+  m_order1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/db_order1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: root
+    password: root@123
+    hikari:
+      pool-name: HikariCP-m-order1
+      connection-timeout: 30_000
+      idle-timeout: 300_000
+      max-lifetime: 900_000
+      leak-detection-threshold: 60_000
+      minimum-idle: 10
+      maximum-pool-size: 50
+      connection-test-query: SELECT 1
+      prepStmtCacheSize: 300
+      prepStmtCacheSqlLimit: 2048
+      cachePrepStmts: true
+      useServerPrepStmts: true
+  # 从数据源 s_order0
+  s_order0:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/db_order0?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: root
+    password: root@123
+    hikari:
+      pool-name: HikariCP-s-order0
+      connection-timeout: 30_000
+      idle-timeout: 300_000
+      max-lifetime: 900_000
+      leak-detection-threshold: 60_000
+      minimum-idle: 10
+      maximum-pool-size: 50
+      connection-test-query: SELECT 1
+      prepStmtCacheSize: 300
+      prepStmtCacheSqlLimit: 2048
+      cachePrepStmts: true
+      useServerPrepStmts: true
+  # 从数据源 s_order1
+  s_order1:
+    dataSourceClassName: com.zaxxer.hikari.HikariDataSource
+    driverClassName: com.mysql.cj.jdbc.Driver
+    jdbcUrl: jdbc:mysql://127.0.0.1:3306/db_order1?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&rewriteBatchedStatements=true
+    username: root
+    password: root@123
+    hikari:
+      pool-name: HikariCP-s-order1
+      connection-timeout: 30_000
+      idle-timeout: 300_000
+      max-lifetime: 900_000
+      leak-detection-threshold: 60_000
+      minimum-idle: 10
+      maximum-pool-size: 50
+      connection-test-query: SELECT 1
+      prepStmtCacheSize: 300
+      prepStmtCacheSqlLimit: 2048
+      cachePrepStmts: true
+      useServerPrepStmts: true
+rules:
+- !SHARDING
+  tables:
+    t_order:
+      actualDataNodes: order$->{0..1}.t_order_$->{0..1}
+      databaseStrategy:
+        complex:
+          shardingColumns: user_id,order_id
+          shardingAlgorithmName: db_complex
+      tableStrategy:
+        complex:
+          shardingColumns: user_id,order_id
+          shardingAlgorithmName: order_complex
+      keyGenerateStrategy:
+        column: order_id
+        keyGeneratorName: snowflake
+    t_order_item:
+      actualDataNodes: order$->{0..1}.t_order_item_$->{0..1}
+      tableStrategy:
+        complex:
+          shardingColumns: user_id,order_id
+          shardingAlgorithmName: order_item_complex
+      keyGenerateStrategy:
+        column: order_item_id
+        keyGeneratorName: snowflake
+  bindingTables:
+    - t_order,t_order_item
+  defaultDatabaseStrategy:
+    complex:
+      shardingColumns: user_id,order_id
+      shardingAlgorithmName: db_complex
+  defaultTableStrategy:
+    none:
+  shardingAlgorithms:
+    db_inline:
+      type: INLINE
+      props:
+        algorithm-expression: ds_${user_id % 2}
+        # 是否允许范围查询。注意：范围查询会无视分片策略，进行全路由
+        allow-range-query-with-inline-sharding: true
+    db_complex:
+      type: ORDER_DB_COMPLEX
+    order_complex:
+      type: ORDER_TABLE_COMPLEX
+    order_item_complex:
+      type: ORDER_TABLE_COMPLEX
+  keyGenerators:
+    snowflake:
+      type: SNOWFLAKE
+      props:
+        # 5.1.2 新版本设置最大容忍的时钟回拨毫秒数 默认10ms
+        # 如果时钟回拨的时间超过最大容忍的毫秒数阈值，则程序报错；如果在可容忍的范围内，默认分布式主键生成器会等待时钟同步到最后一次主键生成的时间后再继续工作
+        max-tolerate-time-difference-milliseconds: 100
+- !BROADCAST
+  tables:
+    - t_address
+- !READWRITE_SPLITTING
+  dataSourceGroups:
+    order0:
+      writeDataSourceName: m_order0
+      readDataSourceNames:
+        - s_order0
+      transactionalReadQueryStrategy: PRIMARY
+      loadBalancerName: ms-load-balancer
+    order1:
+      writeDataSourceName: m_order1
+      readDataSourceNames:
+        - s_order1
+      transactionalReadQueryStrategy: PRIMARY
+      loadBalancerName: ms-load-balancer
+  loadBalancers:
+    ms-load-balancer:
+      type: ROUND_ROBIN
+- !TRANSACTION
+  defaultType: LOCAL
+- !ENCRYPT
+  tables:
+    t_order:
+      columns:
+        mobile:
+          cipher:
+            name: encrypted_mobile
+            encryptorName: aes_encryptor
+  encryptors:
+    aes_encryptor:
+      type: AES
+      props:
+        aes-key-value: bhvHwC%3
+        digest-algorithm-name: SHA-1
+    md5_encryptor:
+      type: MD5
+# 属性配置 https://shardingsphere.apache.org/document/5.1.2/cn/user-manual/shardingsphere-jdbc/props/
+# ConfigurationPropertyKey
+props:
+  # 是否在日志中打印 SQL 默认false
+  # 打印 SQL 可以帮助开发者快速定位系统问题。日志内容包含：逻辑 SQL，真实 SQL 和 SQL 解析结果。如果开启配置，日志将使用 Topic ShardingSphere-SQL，日志级别是 INFO
+  sql-show: true
+  # 是否在日志中打印简单风格的 SQL 默认false
+  sql-simple: false
+  # 用于设置任务处理线程池的大小 默认infinite 每个 ShardingSphereDataSource 使用一个独立的线程池，同一个 JVM 的不同数据源不共享线程池
+  kernel-executor-size: 10
+  # 一次查询请求在每个数据库实例中所能使用的最大连接数 默认1
+  max-connections-size-per-query: 1
+  # 在程序启动和更新时，是否检查分片元数据的结构一致性 默认false
+  check-table-metadata-enabled: false
+  # 在程序启动和更新时，是否检查重复表 默认false
+  check-duplicate-table-enabled: false
+  # 是否开启联邦查询 默认false
+  sql-federation-enabled: false

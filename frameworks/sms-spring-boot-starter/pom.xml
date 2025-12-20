@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <groupId>com.xtrarust.cloud</groupId>
+        <artifactId>frameworks</artifactId>
+        <version>${revision}</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>sms-spring-boot-starter</artifactId>
+    <packaging>jar</packaging>
+
+    <name>${project.artifactId}</name>
+    <description>SMS 框架</description>
+
+    <dependencies>
+        <!-- https://sms4j.com/doc3/config.html -->
+        <dependency>
+            <groupId>org.dromara.sms4j</groupId>
+            <artifactId>sms4j-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xtrarust.cloud</groupId>
+            <artifactId>redis-spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.xtrarust.cloud</groupId>
+            <artifactId>web-spring-boot-starter</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+</project>

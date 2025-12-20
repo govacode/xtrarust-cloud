@@ -1,0 +1,50 @@
+spring:
+  data:
+    redis:
+      connect-timeout: 10s
+      timeout: 3s
+      username: default
+      password: 123456
+      cluster:
+        max-redirects: 3
+        nodes:
+          - 127.0.0.1:7001
+          - 127.0.0.1:7002
+          - 127.0.0.1:7003
+          - 127.0.0.1:7004
+          - 127.0.0.1:7005
+          - 127.0.0.1:7006
+  cache:
+    type: redis
+    redis:
+      time-to-live: 30m
+      cache-null-values: true
+      use-key-prefix: true
+      key-prefix: "cache:"
+redisson:
+  lazy-initialization: false
+  threads: 16
+  netty-threads: 32
+  transport-mode: NIO
+  protocol: RESP2
+  lock-watchdog-timeout: 30_000
+  check-lock-synced-slaves: true
+  slaves-sync-timeout: 1000
+  reliable-topic-watchdog-timeout: 600_000
+  use-script-cache: true
+  keep-pub-sub-order: true
+  cluster:
+    check-slots-coverage: true
+    scan-interval: 5_000
+    read-mode: SLAVE
+    subscription-mode: MASTER
+    subscription-connection-minimum-idle-size: 1
+    subscription-connection-pool-size: 50
+    sharded-subscription-mode: AUTO
+    slave-connection-minimum-idle-size: 24
+    slave-connection-pool-size: 64
+    master-connection-minimum-idle-size: 24
+    master-connection-pool-size: 24
+    idle-connection-timeout: 10_000
+    retry-attempts: 3
+    retry-interval: 1500

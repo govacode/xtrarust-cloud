@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Error</title>
+    <link th:href="@{/css/error.css}" rel="stylesheet" />
+</head>
+<body>
+    <div class="content">
+        <img th:src="@{/images/500.svg}" alt="">
+        <div class="content-r">
+            <h1 th:text="${errorTitle}"></h1>
+            <p th:text="${errorMessage}"></p>
+        </div>
+    </div>
+    <script th:src="@{/layui/layui.js}"></script>
+</body>
+</html>

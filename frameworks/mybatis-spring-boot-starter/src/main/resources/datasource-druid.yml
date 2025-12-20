@@ -1,0 +1,75 @@
+# 动态数据源集成Druid配置
+spring:
+  autoconfigure:
+    exclude:
+      # 排除 Druid 的自动配置，使用 dynamic-datasource-spring-boot-starter 配置多数据源
+      - com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
+  datasource:
+    druid:
+      # druid监控页面
+      stat-view-servlet:
+        enabled: true
+        # 设置白名单，不填则允许所有访问
+        allow:
+        url-pattern: /druid/*
+        loginUsername: admin
+        loginPassword: 123456
+    # DynamicDataSourceProperties
+    dynamic:
+      druid:
+        # 初始连接数
+        initial-size: 5
+        # 最小连接池数量，相当于minPoolSize
+        min-idle: 10
+        # 最大连接池数量，相当于maxPoolSize
+        max-active: 30
+        # 配置获取连接等待超时的时间，单位：ms
+        max-wait: 30_000
+        # 避免DB单方面关闭连接 如MySQL设置interactive_timeout、wait_timeout为30min（默认8h）
+        # 1. minEvictableIdleTimeMillis < maxEvictableIdleTimeMillis
+        # 2. maxEvictableIdleTimeMillis + timeBetweenEvictionRunsMillis < interactive_timeout、wait_timeout
+        # 连接保持空闲而不被驱逐的最小时间，默认30min，单位：ms
+        # 连接被destroy线程关闭条件：>minIdle && 空闲时间>minEvictableIdleTimeMillis
+        min-evictable-idle-time-millis: 300_000
+        # 连接保持空闲而不被驱逐的最大时间，默认7h，单位：ms
+        # 连接被destroy线程关闭条件：空闲时间>maxEvictableIdleTimeMillis
+        max-evictable-idle-time-millis: 900_000
+        # 配置destroy线程运行周期及testWhileIdle连接检测空闲时间，默认1min，单位：ms
+        time-between-eviction-runs-millis: 60_000
+        # 连接检测SQL语句
+        validation-query: SELECT 1 FROM DUAL
+        # 空闲时检测
+        test-while-idle: true
+        # 获取连接时检测
+        test-on-borrow: false
+        # 连接放回连接池时检测
+        test-on-return: false
+        # 监控统计拦截的filters
+        filters: stat,wall
+        # SQL监控 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter
+        stat:
+          merge-sql: true
+          log-slow-sql: true
+          slow-sql-millis: 1000
+        # SQL防火墙 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE-wallfilter
+        wall:
+          multi-statement-allow: true
+      datasource:
+        # 默认数据源
+        primary: master
+        # 是否启用严格模式,默认不启动. 严格模式下未匹配到数据源直接报错, 非严格模式下则使用默认数据源primary所设置的数据源
+        strict: false
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/db?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&autoReconnect=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
+          username: root
+          password: root@123
+        slave:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/db?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&autoReconnect=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
+          username: root
+          password: root@123
+        shardingSphere:
+          # 动态数据源集成ShardingJdbc 配合@DS("shardingSphere")使用
+          driver-class-name: org.apache.shardingsphere.driver.ShardingSphereDriver
+          url: jdbc:shardingsphere:classpath:sharding.yml

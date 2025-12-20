@@ -1,0 +1,113 @@
+<configuration>
+    <!-- 引用 spring-boot jar包 logback 基础配置 -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml" />
+    <springProperty scope="context" name="APP_NAME" source="spring.application.name" defaultValue="spring"/>
+
+    <property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/${APP_NAME}.log}"/>
+
+    <!-- [${PID:- }] %d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger#%method:%L -%msg%n -->
+    <property name="CONSOLE_PATTERN" value="%clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} | %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} | %clr([%t] [%tid]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+    <property name="DEFAULT_PATTERN" value="${APP_NAME} | %d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}} | ${LOG_LEVEL_PATTERN:-%5p} ${PID:- } | [%t] [%tid] %logger : %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <!-- 控制台 Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">　　　　　
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!--<layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${CONSOLE_PATTERN}</pattern>
+            </layout>-->
+            <pattern>${CONSOLE_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 文件 Appender -->
+    <appender name="FILE"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <!--<layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${DEFAULT_PATTERN}</pattern>
+            </layout>-->
+            <pattern>${DEFAULT_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <!-- 日志文件名 -->
+        <file>${LOG_FILE}</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 滚动后的日志文件名 对应配置属性：logging.logback.rollingpolicy.file-name-pattern  -->
+            <fileNamePattern>${LOGBACK_ROLLINGPOLICY_FILE_NAME_PATTERN:-${LOG_FILE}.%d{yyyy-MM-dd}.%i.gz}</fileNamePattern>
+            <!-- 启动服务时，是否清理历史日志，一般不建议清理 对应配置属性：logging.logback.rollingpolicy.clean-history-on-start -->
+            <cleanHistoryOnStart>${LOGBACK_ROLLINGPOLICY_CLEAN_HISTORY_ON_START:-false}</cleanHistoryOnStart>
+            <!-- 日志文件，到达多少容量，进行滚动 对应配置属性：logging.logback.rollingpolicy.max-file-size -->
+            <maxFileSize>${LOGBACK_ROLLINGPOLICY_MAX_FILE_SIZE:-100MB}</maxFileSize>
+            <!-- 日志文件的总大小，0 表示不限制 对应配置属性：logging.logback.rollingpolicy.total-size-cap -->
+            <totalSizeCap>${LOGBACK_ROLLINGPOLICY_TOTAL_SIZE_CAP:-0}</totalSizeCap>
+            <!-- 日志文件的保留天数 对应配置属性：logging.logback.rollingpolicy.max-history -->
+            <maxHistory>${LOGBACK_ROLLINGPOLICY_MAX_HISTORY:-30}</maxHistory>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 异步写入日志，提升性能 -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <neverBlock>true</neverBlock>
+        <!-- 不丢失日志。默认的，如果队列的 80% 已满,则会丢弃 TRACT、DEBUG、INFO 级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度，该值会影响性能。默认值为 256 -->
+        <queueSize>2048</queueSize>
+        <appender-ref ref="FILE"/>
+    </appender>
+
+    <!-- Kafka Appender -->
+    <!--<appender name="KAFKA" class="com.github.danielwegener.logback.kafka.KafkaAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${DEFAULT_PATTERN}</pattern>
+            </layout>
+            <charset>UTF-8</charset>
+        </encoder>
+
+        <topic>logstash</topic>
+        <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" />
+        <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" />
+        <producerConfig>bootstrap.servers=116.196.77.168:9092</producerConfig>
+        &lt;!&ndash; don't wait for a broker to ack the reception of a batch.  &ndash;&gt;
+        <producerConfig>acks=0</producerConfig>
+        &lt;!&ndash; wait up to 1000ms and collect log messages before sending them as a batch &ndash;&gt;
+        <producerConfig>linger.ms=1000</producerConfig>
+        &lt;!&ndash; even if the producer buffer runs full, do not block the application but start to drop messages &ndash;&gt;
+        <producerConfig>max.block.ms=0</producerConfig>
+    </appender>-->
+
+    <!-- 异步写入日志，提升性能 -->
+    <appender name="KAFKA_ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <neverBlock>true</neverBlock>
+        <!-- 不丢失日志。默认的，如果队列的 80% 已满,则会丢弃 TRACT、DEBUG、INFO 级别的日志 -->
+        <discardingThreshold>0</discardingThreshold>
+        <!-- 更改默认的队列的深度，该值会影响性能。默认值为 256 -->
+        <queueSize>2048</queueSize>
+        <appender-ref ref="KAFKA"/>
+    </appender>
+
+    <!-- SkyWalking GRPC 日志收集，实现日志中心。注意：SkyWalking 8.4.0 版本开始支持 -->
+    <!--<appender name="GRPC" class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.log.GRPCLogClientAppender">
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+            <layout class="org.apache.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+                <pattern>${PATTERN_DEFAULT}</pattern>
+            </layout>
+        </encoder>
+    </appender>-->
+
+    <!-- 本地环境 -->
+    <springProfile name="local">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+    <!-- 其它环境 -->
+    <springProfile name="dev,test,stage,prod,default">
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="ASYNC"/>
+            <appender-ref ref="KAFKA_ASYNC"/>
+        </root>
+    </springProfile>
+
+</configuration>

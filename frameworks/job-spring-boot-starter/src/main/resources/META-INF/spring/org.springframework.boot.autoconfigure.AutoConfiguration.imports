@@ -1,0 +1,2 @@
+com.xtrarust.cloud.job.config.XxlJobAutoConfiguration
+com.xtrarust.cloud.job.config.AsyncAutoConfiguration

@@ -1,0 +1,3 @@
+com.xtrarust.cloud.web.web.config.CloudWebAutoConfiguration
+com.xtrarust.cloud.web.jackson.config.CloudJacksonAutoConfiguration
+com.xtrarust.cloud.web.doc.CloudSpringDocAutoConfiguration

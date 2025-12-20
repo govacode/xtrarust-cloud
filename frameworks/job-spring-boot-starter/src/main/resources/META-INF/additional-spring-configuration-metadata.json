@@ -1,0 +1,43 @@
+{
+  "groups": [],
+  "properties": [
+    {
+      "name": "xxl.job.enabled",
+      "description": "是否启用XXL-Job.",
+      "defaultValue": false
+    },
+    {
+      "name": "xxl.job.access-token",
+      "description": "访问令牌."
+    },
+    {
+      "name": "xxl.job.admin.addresses",
+      "description": "调度器地址."
+    },
+    {
+      "name": "xxl.job.executor.app-name",
+      "description": "应用名."
+    },
+    {
+      "name": "xxl.job.executor.ip",
+      "description": "执行器的 IP."
+    },
+    {
+      "name": "xxl.job.executor.port",
+      "type": "java.lang.Integer",
+      "description": "执行器的 Port.",
+      "defaultValue": -1
+    },
+    {
+      "name": "xxl.job.executor.log-path",
+      "description": "日志地址."
+    },
+    {
+      "name": "xxl.job.executor.log-retention-days",
+      "type": "java.lang.Integer",
+      "description": "日志保留天数.",
+      "defaultValue": 30
+    }
+  ],
+  "hints": []
+}

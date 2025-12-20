@@ -1,0 +1,2 @@
+com.xtrarust.cloud.redis.config.CloudRedisAutoConfiguration
+com.xtrarust.cloud.redis.config.CloudCacheAutoConfiguration

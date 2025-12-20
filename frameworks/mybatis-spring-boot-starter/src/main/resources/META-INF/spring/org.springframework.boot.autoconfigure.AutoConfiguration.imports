@@ -1,0 +1,2 @@
+com.xtrarust.cloud.db.datasource.config.CloudDataSourceAutoConfiguration
+com.xtrarust.cloud.db.mybatis.config.CloudMybatisPlusAutoConfiguration

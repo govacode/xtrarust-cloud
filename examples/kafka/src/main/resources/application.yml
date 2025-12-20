@@ -1,0 +1,98 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+  tomcat:
+    uri-encoding: UTF-8
+    threads:
+      min-spare: 10
+      max: 200
+    accept-count: 100
+    max-connections: 8192
+    connection-timeout: 5s
+spring:
+  application:
+    name: application
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+  profiles:
+    active: dev
+  web:
+    resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
+  mvc:
+    log-request-details: true
+    static-path-pattern: /**
+    webjars-path-pattern: /webjars/**
+    pathmatch:
+      matching-strategy: path_pattern_parser
+    contentnegotiation:
+      favor-parameter: true
+      parameter-name: format
+    problemdetails:
+      enabled: true
+  servlet:
+    multipart:
+      max-file-size: 16MB
+      max-request-size: 32MB
+  jackson:
+    date-format: 'yyyy-MM-dd HH:mm:ss'
+    timeZone: GMT+8
+    default-property-inclusion: non_null
+  messages:
+    basename: 'i18n.message'
+    encoding: UTF-8
+    cache-duration: 3600
+  task:
+    execution:
+      thread-name-prefix: 'async-task-'
+      pool:
+        core-size: 10
+        max-size: 100
+        queue-capacity: 256
+        keep-alive: 60s
+        allow-core-thread-timeout: false
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+    scheduling:
+      thread-name-prefix: 'scheduling-'
+      pool:
+        size: 20
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+  kafka:
+    bootstrap-servers: 127.0.0.1:9092,127.0.0.1:9192,127.0.0.1:9292
+    producer:
+      client-id: test-producer
+      acks: all
+      compression-type: snappy
+      batch-size: 16KB
+      retries: 3
+      buffer-memory: 32MB
+      key-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      # value-serializer: "org.springframework.kafka.support.serializer.JsonSerializer"
+      value-serializer: "org.apache.kafka.common.serialization.StringSerializer"
+      properties:
+        "partitioner.class": "org.apache.kafka.clients.consumer.StickyAssignor"
+        "enable.idempotence": "true"
+        "linger.ms": "10"
+        "retry.backoff.ms": "200"
+        "max.in.flight.requests.per.connection": "5"
+    consumer:
+      client-id: test-consumer
+      enable-auto-commit: false
+      auto-commit-interval: 5s
+      auto-offset-reset: earliest
+      max-poll-records: 500
+      heartbeat-interval: 3s
+      key-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+      # value-deserializer: "org.springframework.kafka.support.serializer.JsonDeserializer"
+      value-deserializer: "org.apache.kafka.common.serialization.StringDeserializer"
+    listener:
+      type: single
+      ack-mode: manual
+      async-acks: false
+      poll-timeout: 5s

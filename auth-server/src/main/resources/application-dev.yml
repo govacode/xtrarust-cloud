@@ -1,0 +1,373 @@
+server:
+  servlet:
+    context-path: /
+    session:
+      tracking-modes: cookie
+      cookie:
+        # 指定存储 SessionId 的 Cookie 名（使用 Redis 存储 Session 后，Cookie 名默认会变为 SESSION）
+        name: SESSION
+springdoc:
+  api-docs:
+    enabled: true
+  info:
+    title: auth server
+    description: 认证授权服务
+    contact:
+      name: gova
+    version: 1.0.0
+  oAuth2:
+    token-url: http://127.0.0.1:9000/oauth2/token
+    scopes:
+      - openid
+      - profile
+spring:
+  threads:
+    virtual:
+      enabled: true
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+  jackson:
+    timeZone: GMT+8
+    default-property-inclusion: always
+    serialization:
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+  servlet:
+    multipart:
+      max-file-size: 16MB
+      max-request-size: 32MB
+  messages:
+    basename: i18n/auth,i18n/messages
+    encoding: UTF-8
+    cache-duration: 3600
+  thymeleaf:
+    cache: false
+    prefix: classpath:/templates/
+    suffix: .html
+    mode: HTML
+    servlet:
+      content-type: text/html
+    encoding: UTF-8
+  task:
+    execution:
+      thread-name-prefix: 'async-task-'
+      pool:
+        core-size: 10
+        max-size: 100
+        queue-capacity: 512
+        keep-alive: 60s
+        allow-core-thread-timeout: false
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+    scheduling:
+      thread-name-prefix: 'scheduling-'
+      pool:
+        size: 20
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+  session:
+    # 优先级高于server.servlet.session.timeout
+    timeout: 30m
+    redis:
+      # 参见 RedisSessionConfiguration 配置类
+      repository-type: indexed
+      flush-mode: on_save
+      save-mode: on_set_attribute
+      namespace: 'spring:session'
+  autoconfigure:
+    exclude:
+      - com.alibaba.druid.spring.boot3.autoconfigure.DruidDataSourceAutoConfigure
+  datasource:
+    druid:
+      # druid监控页面
+      stat-view-servlet:
+        enabled: true
+        # 设置白名单，不填则允许所有访问
+        allow:
+        url-pattern: /druid/*
+        loginUsername: admin
+        loginPassword: 123456
+    dynamic:
+      druid:
+        # 初始连接数
+        initial-size: 5
+        # 最小连接池数量，相当于minPoolSize
+        min-idle: 10
+        # 最大连接池数量，相当于maxPoolSize
+        max-active: 30
+        # 配置获取连接等待超时的时间，单位：ms
+        max-wait: 30_000
+        # 避免DB单方面关闭连接 如MySQL设置interactive_timeout、wait_timeout为30min（默认8h）
+        # 1. minEvictableIdleTimeMillis < maxEvictableIdleTimeMillis
+        # 2. maxEvictableIdleTimeMillis + timeBetweenEvictionRunsMillis < interactive_timeout、wait_timeout
+        # 连接保持空闲而不被驱逐的最小时间，默认30min，单位：ms
+        # 连接被destroy线程关闭条件：>minIdle && 空闲时间>minEvictableIdleTimeMillis
+        min-evictable-idle-time-millis: 300_000
+        # 连接保持空闲而不被驱逐的最大时间，默认7h，单位：ms
+        # 连接被destroy线程关闭条件：空闲时间>maxEvictableIdleTimeMillis
+        max-evictable-idle-time-millis: 900_000
+        # 配置destroy线程运行周期及testWhileIdle连接检测空闲时间，默认1min，单位：ms
+        time-between-eviction-runs-millis: 60_000
+        # 连接检测SQL语句
+        validation-query: SELECT 1 FROM DUAL
+        # 空闲时检测
+        test-while-idle: true
+        # 获取连接时检测
+        test-on-borrow: false
+        # 连接放回连接池时检测
+        test-on-return: false
+        # 监控统计拦截的filters
+        filters: stat,wall
+        # SQL监控 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE_StatFilter
+        stat:
+          merge-sql: true
+          log-slow-sql: true
+          slow-sql-millis: 1000
+        # SQL防火墙 https://github.com/alibaba/druid/wiki/%E9%85%8D%E7%BD%AE-wallfilter
+        wall:
+          multi-statement-allow: true
+      datasource:
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/auth_server?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&autoReconnect=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
+          username: root
+          password: root@123
+        slave:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://127.0.0.1:3306/auth_server?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&autoReconnect=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
+          username: root
+          password: root@123
+  data:
+    redis:
+      connect-timeout: 10s
+      timeout: 3s
+      password: 123456
+      host: localhost
+  #      cluster:
+#        max-redirects: 3
+#        nodes:
+#          - 127.0.0.1:7001
+#          - 127.0.0.1:7002
+#          - 127.0.0.1:7003
+#          - 127.0.0.1:7004
+#          - 127.0.0.1:7005
+#          - 127.0.0.1:7006
+  cache:
+    type: redis
+    redis:
+      time-to-live: 30m
+      cache-null-values: true
+      use-key-prefix: true
+      key-prefix: "cache:"
+  security:
+    # 用户名密码认证图形验证码
+    captcha:
+      enable: true
+      timeout: 60s
+      height: 48
+      width: 130
+    ignore-uri-list:
+      - '/error/**'
+      - '/code/**'
+      - '/login/**'
+    oauth2:
+      client:
+        registration:
+          google:
+            # CommonOAuth2Provider
+            provider: google
+            client-id: ${GOOGLE_CLIENT_ID:google-client-id}
+            client-secret: ${GOOGLE_CLIENT_SECRET:google-client-secret}
+            client-name: 谷歌登录
+            scope: openid, https://www.googleapis.com/auth/userinfo.profile, https://www.googleapis.com/auth/userinfo.email
+          qq:
+            # https://wiki.connect.qq.com/
+            provider: qq
+            client-id: qq
+            client-secret: qq
+            client-name: QQ登录
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
+            scope: get_user_info
+          wechat:
+            # 扫码登录微信有两种实现方式
+            # 基于微信开放平台（需要开企业认证才能注册）
+            # 网站应用文档 https://developers.weixin.qq.com/doc/oplatform/Website_App/WeChat_Login/Wechat_Login.html
+            # 注意：授权请求地址与公众平台不一样 scope也不一样 snsapi_login
+            # authorization-uri: 'https://open.weixin.qq.com/connect/qrconnect'
+            # 基于微信公众平台（需要认证微信服务号）
+            # 网页授权文档 https://developers.weixin.qq.com/doc/offiaccount/OA_Web_Apps/Wechat_webpage_authorization.html
+            # 微信公众平台测试号 https://mp.weixin.qq.com/debug/cgi-bin/sandboxinfo?action=showinfo&t=sandbox/index
+            # 注意：测试号配置好之后需要在微信开发者工具中测试
+            provider: wechat
+            client-id: wx81ea24567a335ffd
+            client-secret: c60ee652669f971cbe97d2b89ac7b47e
+            client-name: 微信网页授权
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
+            scope: snsapi_userinfo
+          weibo:
+            # https://open.weibo.com/wiki/Connect/login
+            provider: weibo
+            client-id: weibo
+            client-secret: weibo
+            client-name: 微博登录
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
+            scope: user_info
+          gitee:
+            # https://gitee.com/api/v5/oauth_doc
+            provider: gitee
+            client-id: c2e8dcca094b4322e58455d38fd880cb11fdcff87de01e4cbcc7fa00238d0758
+            client-secret: 09de91a2a3aca2859c7efa96ae37eb7dacebc3aac0d07943e146e0d43afdaaf1
+            client-name: 码云登录
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/{action}/oauth2/code/{registrationId}'
+            scope: user_info
+        provider:
+          google:
+            user-name-attribute: email
+          qq:
+            authorization-uri: 'https://graph.qq.com/oauth2.0/authorize'
+            token-uri: 'https://graph.qq.com/oauth2.0/token'
+            # 配置为QQ获取OpenID地址
+            user-info-uri: 'https://graph.qq.com/oauth2.0/me'
+            user-name-attribute: 'nickname'
+          wechat:
+            authorization-uri: 'https://open.weixin.qq.com/connect/oauth2/authorize'
+            token-uri: 'https://api.weixin.qq.com/sns/oauth2/access_token'
+            user-info-uri: 'https://api.weixin.qq.com/sns/userinfo'
+            user-name-attribute: 'nickname'
+          weibo:
+            authorization-uri: 'https://api.weibo.com/oauth2/authorize'
+            token-uri: 'https://api.weibo.com/oauth2/access_token'
+            user-info-uri: ''
+            user-name-attribute: ''
+          gitee:
+            authorization-uri: 'https://gitee.com/oauth/authorize'
+            token-uri: 'https://gitee.com/oauth/token'
+            user-info-uri: 'https://gitee.com/api/v5/user'
+            user-name-attribute: 'name'
+  cloud:
+    sentinel:
+      # sentinel规则持久化
+      datasource:
+        # 配置流控规则
+        flow-rule:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            username: ${spring.cloud.nacos.config.username}
+            password: ${spring.cloud.nacos.config.password}
+            group-id: SENTINEL_GROUP
+            data-id: ${spring.application.name}-flow-rules
+            data-type: json
+            # 规则类型见RuleType枚举
+            rule-type: flow
+        # 配置熔断规则
+        degrade-rule:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            username: ${spring.cloud.nacos.config.username}
+            password: ${spring.cloud.nacos.config.password}
+            group-id: SENTINEL_GROUP
+            data-id: ${spring.application.name}-degrade-rules
+            data-type: json
+            rule-type: degrade
+        # 配置热点参数规则
+        param-flow-rule:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            username: ${spring.cloud.nacos.config.username}
+            password: ${spring.cloud.nacos.config.password}
+            group-id: SENTINEL_GROUP
+            data-id: ${spring.application.name}-param-rules
+            data-type: json
+            rule-type: param-flow
+        # 配置系统规则
+        system-rule:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            username: ${spring.cloud.nacos.config.username}
+            password: ${spring.cloud.nacos.config.password}
+            group-id: SENTINEL_GROUP
+            data-id: ${spring.application.name}-system-rules
+            data-type: json
+            rule-type: system
+        # 配置授权规则
+        authority-rule:
+          nacos:
+            server-addr: ${spring.cloud.nacos.config.server-addr}
+            username: ${spring.cloud.nacos.config.username}
+            password: ${spring.cloud.nacos.config.password}
+            group-id: SENTINEL_GROUP
+            data-id: ${spring.application.name}-authority-rules
+            data-type: json
+            rule-type: authority
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+      base-path: '/actuator'
+  endpoint:
+    health:
+      show-details: ALWAYS
+mybatis-plus:
+  mapper:
+    base-package: com.govacode.cloud.auth.repository.mapper
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.govacode.cloud.auth.domain.entity
+  configuration:
+    cache-enabled: false
+    map-underscore-to-camel-case: true
+    lazy-loading-enabled: false
+  global-config:
+    db-config:
+      id-type: NONE
+      logic-delete-field: deleted
+      logic-delete-value: UNIX_TIMESTAMP()
+      logic-not-delete-value: 0
+redisson:
+  lazy-initialization: false
+  threads: 16
+  netty-threads: 32
+  transport-mode: NIO
+  protocol: RESP2
+  lock-watchdog-timeout: 30_000
+  check-lock-synced-slaves: true
+  slaves-sync-timeout: 1000
+  reliable-topic-watchdog-timeout: 600_000
+  use-script-cache: true
+  keep-pub-sub-order: true
+#  cluster:
+#    check-slots-coverage: true
+#    scan-interval: 1000
+#    read-mode: SLAVE
+#    subscription-mode: MASTER
+#    subscription-connection-minimum-idle-size: 1
+#    subscription-connection-pool-size: 50
+#    sharded-subscription-mode: AUTO
+#    slave-connection-minimum-idle-size: 24
+#    slave-connection-pool-size: 64
+#    master-connection-minimum-idle-size: 24
+#    master-connection-pool-size: 24
+#    idle-connection-timeout: 10_000
+#    retry-attempts: 3
+#    retry-interval: 1500
+wechat:
+  miniapp:
+    apps:
+      '小程序1':
+        appid: <appid_1>
+        secret: <secret_1>
+      '小程序2':
+        appid: <appid_2>
+        secret: <secret_2>

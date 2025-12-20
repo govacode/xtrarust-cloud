@@ -1,0 +1,50 @@
+springdoc:
+  api-docs:
+    enabled: true
+  info:
+    title: message resource
+    description: message资源服务
+    contact:
+      name: gova
+    version: 1.0.0
+  oAuth2:
+    token-url: http://127.0.0.1:9000/oauth2/token
+    scopes:
+      - openid
+      - profile
+spring:
+  threads:
+    virtual:
+      enabled: true
+  jackson:
+    timeZone: GMT+8
+    default-property-inclusion: always
+    serialization:
+      fail-on-empty-beans: false
+    deserialization:
+      fail-on-unknown-properties: false
+  task:
+    execution:
+      thread-name-prefix: 'async-task-'
+      pool:
+        core-size: 10
+        max-size: 100
+        queue-capacity: 512
+        keep-alive: 60s
+        allow-core-thread-timeout: false
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+    scheduling:
+      thread-name-prefix: 'scheduling-'
+      pool:
+        size: 20
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # OAuth2ResourceServerJwtConfiguration$JwtDecoderConfiguration
+          jwk-set-uri: http://127.0.0.1:9000/oauth2/jwks
