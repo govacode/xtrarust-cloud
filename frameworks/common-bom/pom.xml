@@ -52,6 +52,16 @@
                 <artifactId>sms-spring-boot-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.xtrarust.cloud</groupId>
+                <artifactId>prometheus-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.xtrarust.cloud</groupId>
+                <artifactId>oss-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
