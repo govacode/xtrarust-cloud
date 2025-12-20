@@ -75,7 +75,6 @@
         <sms4j.version>3.3.5</sms4j.version>
         <!-- 三方云服务相关 -->
         <aws.sdk.version>2.36.0</aws.sdk.version>
-        <aws.crt.version>0.39.3</aws.crt.version>
         <weixin-java.version>4.7.8.B</weixin-java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
@@ -357,21 +356,23 @@
                 <version>${sms4j.version}</version>
             </dependency>
             <!-- 三方云服务相关 -->
+            <!-- AWS S3 -->
             <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>s3</artifactId>
                 <version>${aws.sdk.version}</version>
             </dependency>
             <dependency>
-                <groupId>software.amazon.awssdk.crt</groupId>
-                <artifactId>aws-crt</artifactId>
-                <version>${aws.crt.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>software.amazon.awssdk</groupId>
                 <artifactId>s3-transfer-manager</artifactId>
                 <version>${aws.sdk.version}</version>
             </dependency>
+            <dependency>
+                <groupId>software.amazon.awssdk</groupId>
+                <artifactId>netty-nio-client</artifactId>
+                <version>${aws.sdk.version}</version>
+            </dependency>
+            <!-- WeChat -->
             <dependency>
                 <groupId>com.github.binarywang</groupId>
                 <artifactId>weixin-java-pay</artifactId>
