@@ -17,11 +17,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author gova
  */
+@Slf4j
 @AutoConfiguration
 @ConditionalOnClass(XxlJobSpringExecutor.class)
 @EnableConfigurationProperties({XxlJobProperties.class})
-@EnableScheduling // 开启 Spring 自带的定时任务
-@Slf4j
 public class XxlJobAutoConfiguration {
 
     @Bean

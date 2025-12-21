@@ -13,11 +13,10 @@ import org.springframework.boot.task.ThreadPoolTaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.RejectedExecutionHandler;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 异步任务 Configuration<br>
@@ -28,12 +27,14 @@ import java.util.concurrent.ThreadPoolExecutor;
  *
  * @see org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration
  * @see org.springframework.boot.autoconfigure.task.TaskSchedulingAutoConfiguration
+ * @author gova
  */
 @Slf4j
-@EnableAsync(proxyTargetClass = true)
+@EnableAsync(proxyTargetClass = true) // 开启 Spring 异步任务
+@EnableScheduling // 开启 Spring 定时任务
 @AutoConfiguration(before = {TaskExecutionAutoConfiguration.class})
 @ConditionalOnClass(ThreadPoolTaskExecutor.class)
-public class AsyncAutoConfiguration {
+public class TaskAutoConfiguration {
 
     private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
 
@@ -52,17 +53,11 @@ public class AsyncAutoConfiguration {
     public ThreadPoolTaskExecutorCustomizer threadPoolTaskExecutorCustomizer() {
         return taskExecutor -> {
             // 自定义拒绝策略 默认使用的是AbortPolicy
-            taskExecutor.setRejectedExecutionHandler(new CustomRejectedExecutionHandler());
+            taskExecutor.setRejectedExecutionHandler((r, executor) -> {
+                log.info("reject execute async task: {}", r);
+                throw new RejectedExecutionException("Task " + r.toString() + " rejected from " + executor.toString());
+            });
         };
-    }
-
-    static class CustomRejectedExecutionHandler implements RejectedExecutionHandler {
-
-        @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-            log.info("reject execute task: {}", r);
-            throw new RejectedExecutionException("Task " + r.toString() + " rejected from " + executor.toString());
-        }
     }
 
     // ----------------------------------- 定时任务 -----------------------------------
@@ -75,7 +70,10 @@ public class AsyncAutoConfiguration {
                 log.info("定时任务线程数调整: 1 -> {}", DEFAULT_POOL_SIZE);
                 taskScheduler.setPoolSize(DEFAULT_POOL_SIZE);
             }
-            taskScheduler.setRejectedExecutionHandler(new CustomRejectedExecutionHandler());
+            taskScheduler.setRejectedExecutionHandler((r, executor) -> {
+                log.info("reject execute schedule task: {}", r);
+                throw new RejectedExecutionException("Task " + r.toString() +" rejected from " + executor.toString());
+            });
         };
     }
 }

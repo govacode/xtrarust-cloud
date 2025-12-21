@@ -1,25 +1,27 @@
 spring:
   threads:
     virtual:
-      enabled: false
+      enabled: true
   task:
     # 异步任务 TaskExecutionProperties
     execution:
       thread-name-prefix: async-
-      pool:
-        core-size: 10
-        max-size: 100
-        queue-capacity: 256
-        keep-alive: 60s
-        allow-core-thread-timeout: false
+      # 开启虚拟线程默认使用 SimpleAsyncTaskExecutor
+      simple:
+        # 若配置为 true 当达到 concurrency limit 时会抛出 TaskRejectedException 异常
+        reject-tasks-when-limit-reached: false
+        # -1 indicates no concurrency limit at all.
+        concurrency-limit: -1
       shutdown:
         await-termination: true
         await-termination-period: 60s
-    # 定时任务
+    # 定时任务 TaskSchedulingProperties
     scheduling:
       thread-name-prefix: scheduling-
-      pool:
-        size: 20
+      # 开启虚拟线程默认使用 SimpleAsyncTaskScheduler
+      simple:
+        # -1 indicates no concurrency limit at all.
+        concurrency-limit: -1
       shutdown:
         await-termination: true
         await-termination-period: 60s
