@@ -3,8 +3,6 @@ package com.xtrarust.cloud.common.util;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.map.MapUtil;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.*;
@@ -193,14 +191,6 @@ public class StreamUtils {
                         (map, e) -> map.put(keyMapper.apply(e), valueMapper.apply(e)),
                         Map::putAll
                 );
-    }
-
-    @Data
-    @AllArgsConstructor
-    static class User {
-        private Long id;
-        private String name;
-        private String email; // 可能为 null
     }
 
     /**
