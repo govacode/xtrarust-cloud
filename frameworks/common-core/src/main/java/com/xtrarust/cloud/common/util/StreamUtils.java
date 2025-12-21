@@ -151,7 +151,7 @@ public class StreamUtils {
     }
 
     /**
-     * 将集合转化为Map(注意：value为null时会抛NullPointerException)<br>
+     * 将集合转化为Map(注意：valueMapper映射后的value为null时会抛NullPointerException)<br>
      * <B>{@code Collection<E> -----> Map<K, V>}</B>
      *
      * @param collection  需要转化的集合
