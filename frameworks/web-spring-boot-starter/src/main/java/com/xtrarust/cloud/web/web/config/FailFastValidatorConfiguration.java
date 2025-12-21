@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 /**
  * 配置 HibernateValidator 快速失败
  *
+ * @see org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
  * @author gova
  */
 @AutoConfiguration
