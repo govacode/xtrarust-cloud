@@ -41,7 +41,7 @@ import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebA
  */
 @AutoConfiguration(before = {WebMvcAutoConfiguration.class, MessageSourceAutoConfiguration.class})
 @ConditionalOnWebApplication(type = SERVLET)
-public class CloudWebAutoConfiguration implements WebMvcConfigurer {
+public class WebAutoConfiguration implements WebMvcConfigurer {
 
     /**
      * 区域解析器
@@ -69,7 +69,7 @@ public class CloudWebAutoConfiguration implements WebMvcConfigurer {
     }
 
     /**
-     * 增加GET请求参数中时间类型转换
+     * 增加 GET 请求参数中时间类型转换
      * <ul>
      * <li>HH:mm:ss -> LocalTime</li>
      * <li>yyyy-MM-dd -> LocalDate</li>

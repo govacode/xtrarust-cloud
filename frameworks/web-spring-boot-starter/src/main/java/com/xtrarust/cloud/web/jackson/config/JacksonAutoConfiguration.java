@@ -13,7 +13,6 @@ import com.xtrarust.cloud.common.util.json.JacksonUtil;
 import com.xtrarust.cloud.web.jackson.databind.BigNumberSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import java.math.BigDecimal;
@@ -28,8 +27,8 @@ import java.util.List;
  * @author gova
  */
 @Slf4j
-@AutoConfiguration(before = JacksonAutoConfiguration.class)
-public class CloudJacksonAutoConfiguration {
+@AutoConfiguration(before = org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class)
+public class JacksonAutoConfiguration {
 
     // 注册 AfterburnerModule 提升序列化性能
     @Bean

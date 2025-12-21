@@ -1,3 +1,4 @@
-com.xtrarust.cloud.web.web.config.CloudWebAutoConfiguration
-com.xtrarust.cloud.web.jackson.config.CloudJacksonAutoConfiguration
-com.xtrarust.cloud.web.doc.CloudSpringDocAutoConfiguration
+com.xtrarust.cloud.web.web.config.WebAutoConfiguration
+com.xtrarust.cloud.web.web.config.FailFastValidatorConfiguration
+com.xtrarust.cloud.web.jackson.config.JacksonAutoConfiguration
+com.xtrarust.cloud.web.doc.SpringDocAutoConfiguration

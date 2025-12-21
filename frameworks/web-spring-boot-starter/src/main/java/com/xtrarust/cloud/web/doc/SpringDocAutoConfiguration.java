@@ -23,7 +23,7 @@ import org.springframework.http.HttpHeaders;
 @AutoConfiguration(before = SpringDocConfiguration.class)
 @EnableConfigurationProperties(SpringDocProperties.class)
 @ConditionalOnProperty(name = Constants.SPRINGDOC_ENABLED, matchIfMissing = true)
-public class CloudSpringDocAutoConfiguration {
+public class SpringDocAutoConfiguration {
 
     @Bean
     @ConditionalOnMissingBean
