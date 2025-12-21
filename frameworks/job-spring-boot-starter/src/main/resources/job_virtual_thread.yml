@@ -1,0 +1,38 @@
+spring:
+  threads:
+    virtual:
+      enabled: false
+  task:
+    # 异步任务 TaskExecutionProperties
+    execution:
+      thread-name-prefix: async-
+      pool:
+        core-size: 10
+        max-size: 100
+        queue-capacity: 256
+        keep-alive: 60s
+        allow-core-thread-timeout: false
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+    # 定时任务
+    scheduling:
+      thread-name-prefix: scheduling-
+      pool:
+        size: 20
+      shutdown:
+        await-termination: true
+        await-termination-period: 60s
+xxl:
+  job:
+    enabled: true
+    # 执行器通讯token
+    accessToken: default_token
+    # 调度器地址
+    admin:
+      addresses: http://127.0.0.1:9090/xxl-job-admin
+    executor:
+      # 执行器应用名
+      app-name: ${spring.application.name}
+      # 执行器日志路径
+      log-path: ${user.home}/logs/xxl-job/${spring.application.name}

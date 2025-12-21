@@ -4,8 +4,12 @@ import com.alibaba.ttl.TtlRunnable;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnThreading;
 import org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration;
+import org.springframework.boot.autoconfigure.thread.Threading;
 import org.springframework.boot.task.ThreadPoolTaskExecutorCustomizer;
+import org.springframework.boot.task.ThreadPoolTaskSchedulerCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.core.task.TaskDecorator;
 import org.springframework.scheduling.annotation.EnableAsync;
@@ -31,7 +35,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 @ConditionalOnClass(ThreadPoolTaskExecutor.class)
 public class AsyncAutoConfiguration {
 
+    private static final int DEFAULT_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+
+    // ----------------------------------- 异步任务 -----------------------------------
     @Bean
+    @ConditionalOnThreading(Threading.PLATFORM)
     public TaskDecorator taskDecorator() {
         // 修改提交的任务，接入 TransmittableThreadLocal
         log.info("异步任务接入 TransmittableThreadLocal");
@@ -39,9 +47,13 @@ public class AsyncAutoConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnThreading(Threading.PLATFORM)
     public ThreadPoolTaskExecutorCustomizer threadPoolTaskExecutorCustomizer() {
-        // 自定义拒绝策略
-        return taskExecutor -> taskExecutor.setRejectedExecutionHandler(new CustomRejectedExecutionHandler());
+        return taskExecutor -> {
+            // 自定义拒绝策略 默认使用的是AbortPolicy
+            taskExecutor.setRejectedExecutionHandler(new CustomRejectedExecutionHandler());
+        };
     }
 
     static class CustomRejectedExecutionHandler implements RejectedExecutionHandler {
@@ -51,5 +63,19 @@ public class AsyncAutoConfiguration {
             log.info("reject execute task: {}", r);
             throw new RejectedExecutionException("Task " + r.toString() + " rejected from " + executor.toString());
         }
+    }
+
+    // ----------------------------------- 定时任务 -----------------------------------
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnThreading(Threading.PLATFORM)
+    public ThreadPoolTaskSchedulerCustomizer threadPoolTaskSchedulerCustomizer() {
+        return taskScheduler -> {
+            if (taskScheduler.getPoolSize() == 1) {
+                log.info("定时任务线程数调整: 1 -> {}", DEFAULT_POOL_SIZE);
+                taskScheduler.setPoolSize(DEFAULT_POOL_SIZE);
+            }
+            taskScheduler.setRejectedExecutionHandler(new CustomRejectedExecutionHandler());
+        };
     }
 }
