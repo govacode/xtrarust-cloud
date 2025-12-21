@@ -2,7 +2,7 @@ package com.xtrarust.cloud.common.exception;
 
 import com.xtrarust.cloud.common.exception.errorcode.IErrorCode;
 import com.xtrarust.cloud.common.util.MessageUtils;
-import com.xtrarust.cloud.common.util.string.StringUtils;
+import com.xtrarust.cloud.common.util.StringUtils;
 import lombok.Getter;
 
 /**

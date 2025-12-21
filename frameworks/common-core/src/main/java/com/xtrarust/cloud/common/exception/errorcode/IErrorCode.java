@@ -1,7 +1,7 @@
 package com.xtrarust.cloud.common.exception.errorcode;
 
 /**
- * 平台错误码
+ * 错误码
  */
 public interface IErrorCode {
 

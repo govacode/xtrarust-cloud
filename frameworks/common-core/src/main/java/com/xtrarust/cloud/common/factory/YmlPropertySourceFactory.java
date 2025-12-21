@@ -1,6 +1,6 @@
 package com.xtrarust.cloud.common.factory;
 
-import com.xtrarust.cloud.common.util.string.StringUtils;
+import com.xtrarust.cloud.common.util.StringUtils;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;

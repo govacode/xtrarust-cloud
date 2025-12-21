@@ -1,6 +1,6 @@
 package com.xtrarust.cloud.auth.security.oauth2.server.resource;
 
-import com.xtrarust.cloud.common.util.servlet.ServletUtils;
+import com.xtrarust.cloud.common.util.ServletUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.Setter;

@@ -3,7 +3,7 @@ package com.xtrarust.cloud.db.mybatis.encrypt.interceptor;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ObjectUtil;
-import com.xtrarust.cloud.common.util.string.StringUtils;
+import com.xtrarust.cloud.common.util.StringUtils;
 import com.xtrarust.cloud.db.mybatis.encrypt.annotation.EncryptField;
 import com.xtrarust.cloud.db.mybatis.encrypt.core.EncryptContext;
 import com.xtrarust.cloud.db.mybatis.encrypt.core.EncryptorManager;

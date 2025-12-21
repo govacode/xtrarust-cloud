@@ -7,7 +7,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.xtrarust.cloud.common.util.string.StringUtils;
+import com.xtrarust.cloud.common.util.StringUtils;
 import com.xtrarust.cloud.redis.lock.DistributedLock;
 import com.xtrarust.cloud.redis.lock.RedisDistributedLock;
 import lombok.extern.slf4j.Slf4j;

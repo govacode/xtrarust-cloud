@@ -2,7 +2,7 @@ package com.xtrarust.cloud.auth.security.authentication.handler;
 
 import com.xtrarust.cloud.common.domain.R;
 import com.xtrarust.cloud.common.exception.errorcode.BaseErrorCode;
-import com.xtrarust.cloud.common.util.servlet.ServletUtils;
+import com.xtrarust.cloud.common.util.ServletUtils;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

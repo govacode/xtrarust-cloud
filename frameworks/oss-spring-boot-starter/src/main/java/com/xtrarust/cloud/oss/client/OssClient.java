@@ -3,12 +3,12 @@ package com.xtrarust.cloud.oss.client;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.IdUtil;
+import com.xtrarust.cloud.common.util.StringUtils;
 import com.xtrarust.cloud.oss.entity.UploadResult;
 import com.xtrarust.cloud.oss.enums.AccessPolicyType;
 import com.xtrarust.cloud.oss.exception.OssException;
 import com.xtrarust.cloud.oss.properties.OssProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
@@ -52,7 +52,7 @@ public class OssClient {
 
     private static final String HTTPS = "https://";
 
-    private static final String SLASH = "/";
+    private static final String SLASH = StringUtils.SLASH;
 
     /**
      * 配置属性

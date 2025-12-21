@@ -5,7 +5,7 @@ import com.xtrarust.cloud.auth.repository.mapper.Oauth2UserMapper;
 import com.xtrarust.cloud.auth.security.oauth2.client.Oauth2ClientConstants;
 import com.xtrarust.cloud.auth.security.oauth2.client.userinfo.qq.QQUserInfo;
 import com.xtrarust.cloud.auth.security.oauth2.client.userinfo.wechat.WechatUserInfoAttributes;
-import com.xtrarust.cloud.common.util.json.JacksonUtil;
+import com.xtrarust.cloud.common.util.json.JacksonUtils;
 import jakarta.annotation.Resource;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -39,7 +39,7 @@ public class DefaultOauth2UserHandler implements BiConsumer<String, OAuth2User> 
             entity.setOpenid(qqUserInfo.getOpenid());
             entity.setUsername(qqUserInfo.getName());
             entity.setAvatar(qqUserInfo.getFigureUrlQQ100());
-            entity.setRawUserInfo(JacksonUtil.toJsonString(qqUserInfo));
+            entity.setRawUserInfo(JacksonUtils.toJsonString(qqUserInfo));
         } else if (oAuth2User instanceof DefaultOAuth2User defaultOAuth2User) {
             Map<String, Object> attributes = defaultOAuth2User.getAttributes();
             entity.setUsername(oAuth2User.getName());
@@ -47,7 +47,7 @@ public class DefaultOauth2UserHandler implements BiConsumer<String, OAuth2User> 
                 entity.setOpenid((String) attributes.get(WechatUserInfoAttributes.OPENID));
                 entity.setAvatar((String) attributes.get(WechatUserInfoAttributes.HEAD_IMG_URL));
                 entity.setLocation((String) attributes.get(WechatUserInfoAttributes.COUNTRY));
-                entity.setRawUserInfo(JacksonUtil.toJsonString(attributes));
+                entity.setRawUserInfo(JacksonUtils.toJsonString(attributes));
             }
         }
         return entity;

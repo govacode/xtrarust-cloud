@@ -9,7 +9,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.*;
 import com.fasterxml.jackson.datatype.jsr310.ser.*;
 import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
-import com.xtrarust.cloud.common.util.json.JacksonUtil;
+import com.xtrarust.cloud.common.util.json.JacksonUtils;
 import com.xtrarust.cloud.web.jackson.databind.BigNumberSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
@@ -75,10 +75,10 @@ public class JacksonAutoConfiguration {
 
     @Bean
     @SuppressWarnings("InstantiationOfUtilityClass")
-    public JacksonUtil jsonUtils(List<ObjectMapper> objectMappers) {
-        JacksonUtil.init(CollectionUtil.getFirst(objectMappers));
+    public JacksonUtils jsonUtils(List<ObjectMapper> objectMappers) {
+        JacksonUtils.init(CollectionUtil.getFirst(objectMappers));
         log.info("初始化 JsonUtils");
-        return new JacksonUtil();
+        return new JacksonUtils();
     }
 
 }
