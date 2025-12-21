@@ -299,7 +299,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @param mapper 自定义转换
      * @return 分割后的数据列表
      */
-    public static <T> List<T> splitTo(String str, Function<? super Object, T> mapper) {
+    public static <T> List<T> splitTo(String str, Function<? super String, T> mapper) {
         return splitTo(str, SEPARATOR, mapper);
     }
 
@@ -311,7 +311,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @param mapper    自定义转换
      * @return 分割后的数据列表
      */
-    public static <T> List<T> splitTo(String str, String separator, Function<? super Object, T> mapper) {
+    public static <T> List<T> splitTo(String str, String separator, Function<? super String, T> mapper) {
         if (isBlank(str)) {
             return new ArrayList<>(0);
         }

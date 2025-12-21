@@ -1,7 +1,7 @@
 package com.xtrarust.cloud.db.mybatis.core.type;
 
 import cn.hutool.core.collection.CollUtil;
-import com.xtrarust.cloud.common.util.string.StrUtils;
+import com.xtrarust.cloud.common.util.StringUtils;
 import org.apache.ibatis.type.JdbcType;
 import org.apache.ibatis.type.MappedJdbcTypes;
 import org.apache.ibatis.type.MappedTypes;
@@ -50,6 +50,6 @@ public class LongListTypeHandler implements TypeHandler<List<Long>> {
         if (value == null) {
             return null;
         }
-        return StrUtils.splitToLong(value, COMMA);
+        return StringUtils.splitTo(value, COMMA, Long::valueOf);
     }
 }
