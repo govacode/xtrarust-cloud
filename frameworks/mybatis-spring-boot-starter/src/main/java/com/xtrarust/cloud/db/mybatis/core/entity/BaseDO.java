@@ -22,7 +22,7 @@ public abstract class BaseDO implements Serializable {
      * <a href="https://github.com/baomidou/mybatis-plus/issues/1386">逻辑删除与唯一索引冲突</a>
      */
     @TableLogic
-    private Integer deleted;
+    private Long deleted;
 
     /**
      * 创建者

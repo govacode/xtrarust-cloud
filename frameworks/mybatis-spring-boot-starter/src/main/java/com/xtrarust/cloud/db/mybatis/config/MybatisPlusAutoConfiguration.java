@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.plugins.inner.BlockAttackInnerIntercep
 import com.baomidou.mybatisplus.extension.plugins.inner.OptimisticLockerInnerInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import com.xtrarust.cloud.db.mybatis.core.handler.AuditFieldMetaObjectHandler;
-import com.xtrarust.cloud.db.mybatis.core.handler.CustomIdGenerator;
+import com.xtrarust.cloud.db.mybatis.core.handler.SnowflakeIdGenerator;
 import com.xtrarust.cloud.db.mybatis.encrypt.core.EncryptorManager;
 import com.xtrarust.cloud.db.mybatis.encrypt.interceptor.MybatisDecryptInterceptor;
 import com.xtrarust.cloud.db.mybatis.encrypt.interceptor.MybatisEncryptInterceptor;
@@ -26,7 +26,7 @@ import org.springframework.context.annotation.Primary;
  */
 @AutoConfiguration
 @MapperScan(value = "${mybatis-plus.mapper.base-package}")
-public class CloudMybatisPlusAutoConfiguration {
+public class MybatisPlusAutoConfiguration {
 
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
@@ -60,7 +60,7 @@ public class CloudMybatisPlusAutoConfiguration {
     @Bean
     @Primary
     public IdentifierGenerator idGenerator() {
-        return new CustomIdGenerator();
+        return new SnowflakeIdGenerator();
     }
 
     @Configuration(proxyBeanMethods = false)

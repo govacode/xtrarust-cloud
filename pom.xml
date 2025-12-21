@@ -36,7 +36,7 @@
         <druid.version>1.2.27</druid.version>
         <mybatis-plus.version>3.5.14</mybatis-plus.version>
         <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
-        <mybatis-plus-join.version>1.5.4</mybatis-plus-join.version>
+        <mybatis-plus-join.version>1.5.5</mybatis-plus-join.version>
         <shardingsphere.version>5.5.2</shardingsphere.version>
         <redisson.version>3.52.0</redisson.version>
         <!-- 消息队列 -->

@@ -9,7 +9,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * 审计字段自动填充 <a href="https://baomidou.com/pages/4c6bcf"></a>
