@@ -127,12 +127,17 @@ public class RedissonProperties {
     private int cleanUpKeysAmount = 100;
 
     /**
-     * 单机服务配置
+     * 单机配置
      */
     private SingleServerConfig single;
 
     /**
-     * 集群服务配置
+     * 哨兵配置
+     */
+    private SentinelConfig sentinel;
+
+    /**
+     * 集群配置
      */
     private ClusterConfig cluster;
 
@@ -202,6 +207,13 @@ public class RedissonProperties {
          * <p>Time interval in milliseconds after which another one attempt to send Redis command will be executed.
          */
         private int retryInterval = 1500;
+    }
+
+    @Data
+    @NoArgsConstructor
+    public static class SentinelConfig {
+
+
     }
 
     @Data
@@ -326,8 +338,6 @@ public class RedissonProperties {
          * <p>Time interval in milliseconds after which another one attempt to send Redis command will be executed.
          */
         private int retryInterval = 1500;
-
-        private String password;
     }
 
 }

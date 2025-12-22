@@ -43,7 +43,7 @@ import java.time.Duration;
 @Slf4j
 @AutoConfiguration
 @EnableConfigurationProperties(RedissonProperties.class)
-public class CloudRedisAutoConfiguration {
+public class RedisAutoConfiguration {
 
     @Bean
     public RedissonAutoConfigurationCustomizer redissonAutoConfigurationCustomizer(ObjectMapper objectMapper,
@@ -73,7 +73,7 @@ public class CloudRedisAutoConfiguration {
             RedissonProperties.ClusterConfig clusterConfig = redissonProperties.getCluster();
             if (ObjectUtil.isNotNull(clusterConfig)) {
                 configuration.useClusterServers()
-                        //设置redis key前缀
+                        // 设置redis key前缀
                         .setNameMapper(new KeyPrefixNameMapper(redissonProperties.getKeyPrefix()))
                         .setCheckSlotsCoverage(clusterConfig.getCheckSlotsCoverage())
                         // 集群拓扑扫描
@@ -91,12 +91,16 @@ public class CloudRedisAutoConfiguration {
                         .setRetryAttempts(clusterConfig.getRetryAttempts())
                         .setRetryDelay(new ConstantDelay(Duration.ofMillis(clusterConfig.getRetryInterval())));
             }
-            // TODO 哨兵配置
+            // 哨兵配置
+            RedissonProperties.SentinelConfig sentinelConfig = redissonProperties.getSentinel();
+            if (ObjectUtil.isNotNull(sentinelConfig)) {
+                // TODO
+            }
             // 单机配置
             RedissonProperties.SingleServerConfig singleServerConfig = redissonProperties.getSingle();
             if (ObjectUtil.isNotNull(singleServerConfig)) {
                 configuration.useSingleServer()
-                        //设置redis key前缀
+                        // 设置redis key前缀
                         .setNameMapper(new KeyPrefixNameMapper(redissonProperties.getKeyPrefix()))
                         .setSubscriptionConnectionMinimumIdleSize(singleServerConfig.getSubscriptionConnectionMinimumIdleSize())
                         .setSubscriptionConnectionPoolSize(singleServerConfig.getSubscriptionConnectionPoolSize())

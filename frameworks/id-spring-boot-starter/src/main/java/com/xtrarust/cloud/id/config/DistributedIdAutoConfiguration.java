@@ -2,7 +2,7 @@ package com.xtrarust.cloud.id.config;
 
 import com.xtrarust.cloud.id.core.snowflake.RedisSnowflakeInitializer;
 import com.xtrarust.cloud.id.core.snowflake.RandomSnowflakeInitializer;
-import com.xtrarust.cloud.redis.config.CloudRedisAutoConfiguration;
+import com.xtrarust.cloud.redis.config.RedisAutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -12,7 +12,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 /**
  * 分布式 ID 自动装配
  */
-@AutoConfiguration(after = CloudRedisAutoConfiguration.class)
+@AutoConfiguration(after = RedisAutoConfiguration.class)
 public class DistributedIdAutoConfiguration {
 
     /**

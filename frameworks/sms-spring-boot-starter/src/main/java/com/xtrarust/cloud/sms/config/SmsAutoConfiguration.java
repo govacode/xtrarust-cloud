@@ -1,6 +1,6 @@
 package com.xtrarust.cloud.sms.config;
 
-import com.xtrarust.cloud.redis.config.CloudRedisAutoConfiguration;
+import com.xtrarust.cloud.redis.config.RedisAutoConfiguration;
 import com.xtrarust.cloud.sms.dao.RedisSmsDao;
 import com.xtrarust.cloud.sms.handler.SmsExceptionHandler;
 import org.dromara.sms4j.api.dao.SmsDao;
@@ -15,7 +15,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  *
  * @author gova
  */
-@AutoConfiguration(after = {CloudRedisAutoConfiguration.class})
+@AutoConfiguration(after = {RedisAutoConfiguration.class})
 public class SmsAutoConfiguration {
 
     @Primary

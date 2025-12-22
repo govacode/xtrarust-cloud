@@ -23,18 +23,19 @@ import org.springframework.util.StringUtils;
 import java.util.Objects;
 
 /**
- * Cache 配置类，基于 Redis 实现
+ * Cache 配置类，基于 Redis 实现<br>
  *
- * 使用：
- * @Cacheable(cacheNames = "cacheName", key = "#id", unless = "#result == null") // 不缓存空值
- * @Cacheable(cacheNames = "cacheName", key = "#id") // 解决缓存穿透：缓存空值 + spring.cache.redis.cache-null-values = true
- * @Cacheable(cacheNames = "cacheName", key = "#id", sync = true) // 解决缓存击穿
- * @CacheEvict(cacheNames = "cacheName", key = "#id")
+ * <ul>
+ *     <li>@Cacheable(cacheNames = "cacheName", key = "#id", unless = "#result == null") // 不缓存空值</li>
+ *     <li>@Cacheable(cacheNames = "cacheName", key = "#id") // 解决缓存穿透：缓存空值 + spring.cache.redis.cache-null-values = true</li>
+ *     <li>@Cacheable(cacheNames = "cacheName", key = "#id", sync = true) // 解决缓存击穿</li>
+ *     <li>@CacheEvict(cacheNames = "cacheName", key = "#id")</li>
+ * </ul>
  */
 @AutoConfiguration
 @EnableConfigurationProperties({org.springframework.boot.autoconfigure.cache.CacheProperties.class, CacheProperties.class})
 @EnableCaching
-public class CloudCacheAutoConfiguration {
+public class RedisCacheAutoConfiguration {
 
     /**
      * RedisCacheConfiguration Bean
