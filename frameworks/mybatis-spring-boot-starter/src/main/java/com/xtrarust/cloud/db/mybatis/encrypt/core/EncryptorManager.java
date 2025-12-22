@@ -51,7 +51,6 @@ public class EncryptorManager {
         scanEncryptClasses(typeAliasesPackage);
     }
 
-
     /**
      * 获取类加密字段缓存
      */

@@ -91,7 +91,7 @@ public class StreamUtils {
      * @return 拼接后的字符串
      */
     public static <E> String join(Collection<E> collection, Function<E, String> mapper) {
-        return join(collection, mapper, StringUtils.SEPARATOR);
+        return join(collection, mapper, StringUtils.COMMA);
     }
 
     /**

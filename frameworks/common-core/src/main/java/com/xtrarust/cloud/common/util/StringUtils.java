@@ -14,11 +14,11 @@ import java.util.stream.Collectors;
 /**
  * 字符串工具类
  *
- * @author Lion Li
+ * @author gova
  */
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
-    public static final String SEPARATOR = ",";
+    public static final String COMMA = ",";
 
     public static final String SLASH = "/";
 
@@ -300,7 +300,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 分割后的数据列表
      */
     public static <T> List<T> splitTo(String str, Function<? super String, T> mapper) {
-        return splitTo(str, SEPARATOR, mapper);
+        return splitTo(str, COMMA, mapper);
     }
 
     /**
@@ -369,7 +369,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 拼接后的字符串
      */
     public static String joinComma(Iterable<?> iterable) {
-        return StringUtils.join(iterable, SEPARATOR);
+        return StringUtils.join(iterable, COMMA);
     }
 
     /**
@@ -379,7 +379,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return 拼接后的字符串
      */
     public static String joinComma(Object[] array) {
-        return StringUtils.join(array, SEPARATOR);
+        return StringUtils.join(array, COMMA);
     }
 
 }

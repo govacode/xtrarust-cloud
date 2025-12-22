@@ -3,6 +3,9 @@ package com.xtrarust.cloud.db.mybatis.encrypt.core.encryptor;
 import com.xtrarust.cloud.db.mybatis.encrypt.core.Encryptor;
 import com.xtrarust.cloud.db.mybatis.encrypt.enums.EncodeType;
 
+/**
+ * 对称加密算法加密器
+ */
 public abstract class AbstractSymmetricKeyEncryptor implements Encryptor {
 
     protected String key;

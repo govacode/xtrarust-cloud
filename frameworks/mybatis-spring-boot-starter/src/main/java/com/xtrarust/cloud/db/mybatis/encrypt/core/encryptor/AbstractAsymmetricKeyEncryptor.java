@@ -4,6 +4,9 @@ import cn.hutool.core.lang.Assert;
 import com.xtrarust.cloud.db.mybatis.encrypt.core.Encryptor;
 import com.xtrarust.cloud.db.mybatis.encrypt.enums.EncodeType;
 
+/**
+ * 非对称加密算法加密器
+ */
 public abstract class AbstractAsymmetricKeyEncryptor implements Encryptor {
 
     protected String publicKey;

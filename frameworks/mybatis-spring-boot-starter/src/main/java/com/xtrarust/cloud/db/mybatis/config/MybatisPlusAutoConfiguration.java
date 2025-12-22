@@ -63,6 +63,9 @@ public class MybatisPlusAutoConfiguration {
         return new SnowflakeIdGenerator();
     }
 
+    /**
+     * 字段加密配置
+     */
     @Configuration(proxyBeanMethods = false)
     @EnableConfigurationProperties({EncryptorProperties.class, MybatisPlusProperties.class})
     @ConditionalOnProperty(value = "mybatis-plus.encryptor.enable", havingValue = "true")

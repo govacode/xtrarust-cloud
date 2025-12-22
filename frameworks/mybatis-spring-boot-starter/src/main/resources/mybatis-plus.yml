@@ -17,3 +17,7 @@ mybatis-plus:
       # 解决唯一索引与逻辑删除冲突问题（建立唯一索引时需加上逻辑删除字段）
       logic-delete-value: UNIX_TIMESTAMP()
       logic-not-delete-value: 0
+  encryptor:
+    enable: true
+    algorithm: AES
+    key: fP3mY9uR+KqGvI8zJ1XwOQ==

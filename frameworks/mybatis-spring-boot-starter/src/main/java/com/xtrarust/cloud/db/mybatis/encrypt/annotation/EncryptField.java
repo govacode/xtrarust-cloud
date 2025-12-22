@@ -5,7 +5,6 @@ import com.xtrarust.cloud.db.mybatis.encrypt.enums.EncodeType;
 
 import java.lang.annotation.*;
 
-
 /**
  * 字段加密注解
  *
