@@ -1,6 +1,7 @@
 package com.xtrarust.cloud.redis.lock;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 /**
  * 分布式锁
@@ -50,7 +51,7 @@ public interface DistributedLock {
      * @return 获取锁是否成功
      * @throws InterruptedException
      */
-    boolean tryLockRun(String lockKey, Runnable runnable, long waitTime, long leaseTime, TimeUnit unit) throws InterruptedException;
+    boolean tryLockRun(String lockKey, Runnable runnable, long waitTime, long leaseTime, TimeUnit unit);
 
     /**
      * 此方法会一直等待，直到获取锁后，获取到锁后执行 runnable.run() 方法，然后释放锁
@@ -59,10 +60,11 @@ public interface DistributedLock {
      * <li>锁会自动续期</li>
      * </ul>
      *
-     * @param lockKey  上锁的key
-     * @param runnable 需要执行的业务
+     * @param lockKey               上锁的key
+     * @param runnable              需要执行的业务
+     * @param businessCheckSupplier 业务检查Supplier（业务已执行过应返回true）
      */
-    void lockRun(String lockKey, Runnable runnable);
+    void lockRun(String lockKey, Runnable runnable, Supplier<Boolean> businessCheckSupplier);
 
     /**
      * 此方法会一直等待，直到获取锁后，获取到锁后执行 runnable.run() 方法，然后释放锁
@@ -71,10 +73,11 @@ public interface DistributedLock {
      * <li>超过了 leaseTime，若锁还未释放，则自动释放</li>
      * </ul>
      *
-     * @param lockKey   上锁的key
-     * @param runnable  需要执行的业务
-     * @param leaseTime 锁持有时间（必须大于 0：超过了这个时间，若未主动释放，则会自动释放）
-     * @param unit      时间单位
+     * @param lockKey               上锁的key
+     * @param runnable              需要执行的业务
+     * @param leaseTime             锁持有时间（必须大于 0：超过了这个时间，若未主动释放，则会自动释放）
+     * @param unit                  时间单位
+     * @param businessCheckSupplier 业务检查Supplier（业务已执行过应返回true）
      */
-    void lockRun(String lockKey, Runnable runnable, long leaseTime, TimeUnit unit);
+    void lockRun(String lockKey, Runnable runnable, long leaseTime, TimeUnit unit, Supplier<Boolean> businessCheckSupplier);
 }

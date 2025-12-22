@@ -6,6 +6,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 
 import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 
 @Slf4j
 public class RedisDistributedLock implements DistributedLock {
@@ -16,6 +17,7 @@ public class RedisDistributedLock implements DistributedLock {
         this.redissonClient = redisson;
     }
 
+    @Override
     public boolean tryLockRun(String lockKey, Runnable runnable) {
         RLock lock = redissonClient.getLock(lockKey);
         if (lock.tryLock()) {
@@ -29,71 +31,81 @@ public class RedisDistributedLock implements DistributedLock {
         return false;
     }
 
+    @Override
     public boolean tryLockRun(String lockKey, Runnable runnable, long waitTime, TimeUnit unit) {
-        if (waitTime <= 0) {
-            throw new IllegalArgumentException("waitTime must be greater than 0");
-        }
+        Assert.isTrue(waitTime > 0, "waitTime must be greater than 0");
         RLock lock = redissonClient.getLock(lockKey);
         boolean flag = false;
         try {
-            flag = lock.tryLock(waitTime, unit);
-            if (!flag) {
-                return false;
+            if (lock.tryLock(waitTime, unit)) {
+                try {
+                    runnable.run();
+                    flag = true;
+                } finally {
+                    if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                        lock.unlock();
+                    }
+                }
             }
-            runnable.run();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
-        } finally {
-            if (flag) {
-                lock.unlock();
-            }
         }
-        return true;
+        return flag;
     }
 
     @Override
     public boolean tryLockRun(String lockKey, Runnable runnable, long waitTime, long leaseTime, TimeUnit unit) {
         Assert.isTrue(waitTime > 0, "waitTime must be greater than 0");
-        Assert.isTrue(leaseTime > 0, "leaseTime must be greater than 0");
         RLock lock = redissonClient.getLock(lockKey);
         boolean flag = false;
         try {
-            flag = lock.tryLock(waitTime, leaseTime, unit);
-            if (!flag) {
-                return false;
+            if (lock.tryLock(waitTime, leaseTime, unit)) {
+                try {
+                    runnable.run();
+                    flag = true;
+                } finally {
+                    if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                        lock.unlock();
+                    }
+                }
             }
-            runnable.run();
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new RuntimeException(e);
-        } finally {
-            if (flag) {
-                lock.unlock();
-            }
         }
-        return true;
+        return flag;
     }
 
-    public void lockRun(String lockKey, Runnable runnable) {
+    @Override
+    public void lockRun(String lockKey, Runnable runnable, Supplier<Boolean> businessCheckSupplier) {
         RLock lock = redissonClient.getLock(lockKey);
         lock.lock();
         try {
+            if (businessCheckSupplier != null && Boolean.TRUE.equals(businessCheckSupplier.get())) {
+                return;
+            }
             runnable.run();
         } finally {
-            lock.unlock();
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
     }
 
     @Override
-    public void lockRun(String lockKey, Runnable runnable, long leaseTime, TimeUnit unit) {
-        Assert.isTrue(leaseTime > 0, "leaseTime must be greater than 0");
+    public void lockRun(String lockKey, Runnable runnable, long leaseTime, TimeUnit unit, Supplier<Boolean> businessCheckSupplier) {
         RLock lock = redissonClient.getLock(lockKey);
         lock.lock(leaseTime, unit);
         try {
+            if (businessCheckSupplier != null && Boolean.TRUE.equals(businessCheckSupplier.get())) {
+                return;
+            }
             runnable.run();
         } finally {
-            lock.unlock();
+            if (lock.isLocked() && lock.isHeldByCurrentThread()) {
+                lock.unlock();
+            }
         }
     }
 }
