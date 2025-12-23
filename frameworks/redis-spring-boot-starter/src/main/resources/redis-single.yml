@@ -1,18 +1,13 @@
 spring:
   data:
     redis:
+      host: 127.0.0.1
+      port: 6379
+      database: 0
       connect-timeout: 10s
       timeout: 3s
       username: default
       password: 123456
-      cluster:
-        nodes:
-          - 127.0.0.1:7001
-          - 127.0.0.1:7002
-          - 127.0.0.1:7003
-          - 127.0.0.1:7004
-          - 127.0.0.1:7005
-          - 127.0.0.1:7006
   cache:
     type: redis
     redis:
@@ -32,19 +27,11 @@ redisson:
   reliable-topic-watchdog-timeout: 600_000
   use-script-cache: true
   keep-pub-sub-order: true
-  cluster:
-    scan-interval: 5_000
-    check-slots-coverage: true
-    sharded-subscription-mode: AUTO
-    # 主从通用配置
-    slave-connection-minimum-idle-size: 24
-    slave-connection-pool-size: 64
-    master-connection-minimum-idle-size: 24
-    master-connection-pool-size: 64
-    read-mode: SLAVE
-    subscription-mode: MASTER
+  single:
     subscription-connection-minimum-idle-size: 1
     subscription-connection-pool-size: 50
+    connection-minimum-idle-size: 24
+    connection-pool-size: 64
     idle-connection-timeout: 10_000
     retry-attempts: 3
     retry-base-delay: 1000ms
