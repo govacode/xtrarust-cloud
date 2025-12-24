@@ -22,7 +22,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
- * Jackson自动配置
+ * Jackson 自动配置
  *
  * @author gova
  */

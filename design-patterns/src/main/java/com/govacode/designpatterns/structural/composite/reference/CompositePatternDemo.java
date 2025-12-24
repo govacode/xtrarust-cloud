@@ -1,20 +1,13 @@
 package com.govacode.designpatterns.structural.composite.reference;
 
-import cn.hutool.core.collection.CollectionUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.google.common.collect.Lists;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class CompositePatternDemo {
 
@@ -56,7 +49,7 @@ public class CompositePatternDemo {
 
         System.out.println("-------------");
 
-// JSON 序列化
+        // JSON 序列化
         String jsonOutput = JSON.toJSONString(root, SerializerFeature.DisableCircularReferenceDetect);
         System.out.println("JSON 序列化结果:");
         System.out.println(jsonOutput);
