@@ -67,6 +67,11 @@
                 <artifactId>mail-spring-boot-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
+            <dependency>
+                <groupId>com.xtrarust.cloud</groupId>
+                <artifactId>jep-spring-boot-starter</artifactId>
+                <version>${revision}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>

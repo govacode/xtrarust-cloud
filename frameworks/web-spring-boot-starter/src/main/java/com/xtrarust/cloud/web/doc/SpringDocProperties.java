@@ -6,6 +6,7 @@ import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -71,7 +72,7 @@ public class SpringDocProperties {
 
         private String tokenUrl;
 
-        private List<String> scopes;
+        private List<String> scopes = new ArrayList<>();
     }
 
 }

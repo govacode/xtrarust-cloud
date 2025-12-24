@@ -71,6 +71,8 @@
         <otp.version>0.4.0</otp.version>
         <reflections.version>0.10.2</reflections.version>
         <bouncycastle.version>1.78</bouncycastle.version>
+        <!-- Python JEP -->
+        <jep.version>4.3.1</jep.version>
         <!-- SMS -->
         <sms4j.version>3.3.5</sms4j.version>
         <!-- 三方云服务相关 -->
@@ -348,6 +350,12 @@
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
                 <version>${bouncycastle.version}</version>
+            </dependency>
+            <!-- Python JEP -->
+            <dependency>
+                <groupId>black.ninia</groupId>
+                <artifactId>jep</artifactId>
+                <version>${jep.version}</version>
             </dependency>
             <!-- SMS -->
             <dependency>
