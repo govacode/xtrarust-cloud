@@ -23,5 +23,6 @@
         <module>sms-spring-boot-starter</module>
         <module>prometheus-spring-boot-starter</module>
         <module>oss-spring-boot-starter</module>
+        <module>mail-spring-boot-starter</module>
     </modules>
 </project>
