@@ -1,8 +1,7 @@
 package com.xtrarust.cloud.jep.core;
 
 import jep.SharedInterpreter;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
@@ -14,9 +13,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
+@CommonsLog
 public class SingleThreadJepExecutor extends AbstractJepExecutor {
-
-    private static final Log log = LogFactory.getLog(SingleThreadJepExecutor.class);
 
     private final ExecutorService executor;
 
@@ -68,7 +66,7 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
             try {
                 long start = System.currentTimeMillis();
                 T result = pythonTask.run(interpreter);
-                log.info("Python script execution end, elapsed: " + (System.currentTimeMillis() - start) + "ms");
+                log.info("python script execution end, elapsed: " + (System.currentTimeMillis() - start) + "ms");
                 return result;
             } catch (Exception e) {
                 throw new PythonTaskFailedException("Python script execution failed", e);

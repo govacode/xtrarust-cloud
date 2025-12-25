@@ -3,13 +3,16 @@ package com.xtrarust.cloud.jep.core;
 import com.xtrarust.cloud.jep.config.JepProperties;
 import jep.JepConfig;
 import jep.SharedInterpreter;
+import lombok.extern.apachecommons.CommonsLog;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
 
 import java.util.concurrent.CompletableFuture;
 
-public class JepTemplate implements EnvironmentPostProcessor {
+@CommonsLog
+public class JepTemplate implements EnvironmentPostProcessor, DisposableBean {
 
     private final JepProperties properties;
 
@@ -31,5 +34,11 @@ public class JepTemplate implements EnvironmentPostProcessor {
             properties.getIncludePaths().forEach(config::addIncludePaths);
         }
         SharedInterpreter.setConfig(config);
+    }
+
+    @Override
+    public void destroy() throws Exception {
+        this.jepExecutorGroup.shutdownGracefully();
+        log.info("Jep executor group graceful shutdown complete");
     }
 }
