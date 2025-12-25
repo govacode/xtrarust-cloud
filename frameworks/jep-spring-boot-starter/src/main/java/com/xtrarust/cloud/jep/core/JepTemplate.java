@@ -1,36 +1,35 @@
 package com.xtrarust.cloud.jep.core;
 
-import jep.Interpreter;
-import org.apache.commons.pool2.impl.GenericObjectPool;
+import com.xtrarust.cloud.jep.config.JepProperties;
+import jep.JepConfig;
+import jep.SharedInterpreter;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.env.EnvironmentPostProcessor;
+import org.springframework.core.env.ConfigurableEnvironment;
 
-public class JepTemplate {
+import java.util.concurrent.CompletableFuture;
 
-    private final GenericObjectPool<Interpreter> pool;
+public class JepTemplate implements EnvironmentPostProcessor {
 
-    public JepTemplate(GenericObjectPool<Interpreter> pool) {
-        this.pool = pool;
+    private final JepProperties properties;
+
+    private final JepExecutorGroup jepExecutorGroup;
+
+    public JepTemplate(JepProperties properties) {
+        this.properties = properties;
+        this.jepExecutorGroup = new DefaultJepExecutorGroup(properties.getThreads());
     }
 
-    public <T> T execute(PythonTask<T> task) {
-        Interpreter interpreter = null;
-        try {
-            interpreter = pool.borrowObject();
-            return task.run(interpreter);
-        } catch (Exception e) {
-            throw new RuntimeException("Python execution failed", e);
-        } finally {
-            if (interpreter != null) {
-                try {
-                    interpreter.exec("import gc; globals().clear(); gc.collect()");
-                    pool.returnObject(interpreter);
-                } catch (Exception e) {
-                    try {
-                        pool.invalidateObject(interpreter);
-                    } catch (Exception ex) {
-                        // ignore
-                    }
-                }
-            }
+    public <T> CompletableFuture<T> submit(PythonTask<T> pythonTask) {
+        return jepExecutorGroup.submit(pythonTask);
+    }
+
+    @Override
+    public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
+        JepConfig config = new JepConfig();
+        if (properties.getIncludePaths() != null) {
+            properties.getIncludePaths().forEach(config::addIncludePaths);
         }
+        SharedInterpreter.setConfig(config);
     }
 }
