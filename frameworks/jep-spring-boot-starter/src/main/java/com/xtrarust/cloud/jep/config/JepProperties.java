@@ -23,5 +23,5 @@ public class JepProperties {
     /**
      * 执行线程数
      */
-    private int threads = Runtime.getRuntime().availableProcessors();
+    private int threads = 1;
 }

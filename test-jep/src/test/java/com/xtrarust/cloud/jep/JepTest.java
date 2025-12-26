@@ -2,6 +2,8 @@ package com.xtrarust.cloud.jep;
 
 import com.xtrarust.cloud.jep.core.JepTemplate;
 import com.xtrarust.cloud.jep.core.PythonTask;
+import com.xtrarust.cloud.jep.core.ScriptValidationResult;
+import com.xtrarust.cloud.jep.core.ScriptValidationTask;
 import jep.Interpreter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -21,11 +23,17 @@ public class JepTest {
 
     @Test
     public void test() throws Exception {
-        System.setProperty("jep.no.thread.check", "true");
-
         ExecutorService executorService = Executors.newFixedThreadPool(10);
         CountDownLatch latch = new CountDownLatch(10000);
         long start = System.currentTimeMillis();
+
+        ScriptValidationResult validationResult = jepTemplate.submit(new ScriptValidationTask("// abc")).get();
+        if (validationResult.isPass()) {
+            log.info("script validation passed");
+        } else {
+            log.info("script validation failed, error: {}", validationResult.getError());
+        }
+
         for (int i = 0; i < 10000; i++) {
             executorService.execute(() -> {
                try {

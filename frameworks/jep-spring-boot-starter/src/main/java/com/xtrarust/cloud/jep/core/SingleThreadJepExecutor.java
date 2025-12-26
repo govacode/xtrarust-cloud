@@ -16,6 +16,22 @@ import java.util.concurrent.atomic.AtomicLong;
 @CommonsLog
 public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
+    private static final String INIT_SCRIPT = """
+            import sys, gc
+            __builtins__['_jep_white_list'] = set(globals().keys())
+            """;
+
+    private static final String CLEANUP_SCRIPT = """
+            white_list = __builtins__.get('_jep_white_list')
+            for k in list(globals().keys()):
+                if white_list and k not in white_list:
+                    try:
+                        del globals()[k]
+                    except:
+                        pass
+            gc.collect()
+            """;
+
     private final ExecutorService executor;
 
     private SharedInterpreter interpreter;
@@ -38,17 +54,18 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
         executor.execute(() -> {
             try {
                 this.interpreter = new SharedInterpreter();
+                this.interpreter.exec(INIT_SCRIPT);
             } finally {
                 latch.countDown();
             }
         });
         try {
             if (!latch.await(10, TimeUnit.SECONDS)) {
-                throw new RuntimeException("JEP initialization timeout");
+                throw new RuntimeException("Jep initialization timeout");
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new RuntimeException("JEP init interrupted", e);
+            throw new RuntimeException("Jep initialization interrupted", e);
         }
     }
 
@@ -59,8 +76,11 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
     @Override
     public <T> CompletableFuture<T> submit(PythonTask<T> pythonTask) {
+        if (this.interpreter == null) {
+            throw new PythonTaskFailedException("Jep interpreter not initialized, please check python environment or java library path");
+        }
         if (isShuttingDown) {
-            throw new IllegalStateException("Jep executor is shutting down");
+            throw new PythonTaskFailedException("Jep executor is shutting down");
         }
         return CompletableFuture.supplyAsync(() -> {
             try {
@@ -71,10 +91,19 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
             } catch (Exception e) {
                 throw new PythonTaskFailedException("Python script execution failed", e);
             } finally {
+                cleanup();
                 // 任务执行完，更新静默期计时起点
                 lastTaskEndTime.set(System.nanoTime());
             }
         }, this.executor);
+    }
+
+    private void cleanup() {
+        try {
+            this.interpreter.exec(CLEANUP_SCRIPT);
+        } catch (Exception e) {
+            log.warn("Jep interpreter cleanup failed", e);
+        }
     }
 
     @Override
