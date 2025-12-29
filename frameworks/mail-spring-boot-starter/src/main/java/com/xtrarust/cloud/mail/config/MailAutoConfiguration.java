@@ -28,8 +28,12 @@ public class MailAutoConfiguration {
         account.setSocketFactoryPort(mailProperties.getPort());
         account.setStarttlsEnable(mailProperties.getStarttlsEnable());
         account.setSslEnable(mailProperties.getSslEnable());
-        account.setTimeout(mailProperties.getTimeout());
-        account.setConnectionTimeout(mailProperties.getConnectionTimeout());
+        if (mailProperties.getTimeout() != null) {
+            account.setTimeout(mailProperties.getTimeout().toMillis());
+        }
+        if (mailProperties.getConnectionTimeout() != null) {
+            account.setConnectionTimeout(mailProperties.getConnectionTimeout().toMillis());
+        }
         return account;
     }
 

@@ -8,7 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.mail.JakartaMail;
 import cn.hutool.extra.mail.JakartaUserPassAuthenticator;
 import cn.hutool.extra.mail.MailAccount;
-import com.xtrarust.cloud.common.util.SpringUtils;
+import cn.hutool.extra.spring.SpringUtil;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Session;
 import lombok.AccessLevel;
@@ -30,7 +30,7 @@ import java.util.Objects;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MailUtils {
 
-    private static final MailAccount ACCOUNT = SpringUtils.getBean(MailAccount.class);
+    private static final MailAccount ACCOUNT = SpringUtil.getBean(MailAccount.class);
 
     /**
      * 获取邮件发送实例

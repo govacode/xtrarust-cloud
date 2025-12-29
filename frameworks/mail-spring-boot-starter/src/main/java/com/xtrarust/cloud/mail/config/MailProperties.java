@@ -3,6 +3,8 @@ package com.xtrarust.cloud.mail.config;
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.time.Duration;
+
 /**
  * JavaMail 配置属性
  *
@@ -64,10 +66,10 @@ public class MailProperties {
     /**
      * SMTP超时时长，单位毫秒，缺省值不超时
      */
-    private Long timeout;
+    private Duration timeout;
 
     /**
      * Socket连接超时值，单位毫秒，缺省值不超时
      */
-    private Long connectionTimeout;
+    private Duration connectionTimeout;
 }
