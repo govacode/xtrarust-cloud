@@ -6,6 +6,7 @@ import com.xtrarust.cloud.jep.core.ScriptValidationResult;
 import com.xtrarust.cloud.jep.core.ScriptValidationTask;
 import jep.Interpreter;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,18 +38,17 @@ public class JepTest {
         for (int i = 0; i < 10000; i++) {
             executorService.execute(() -> {
                try {
-                   Object o = jepTemplate.submit(new PythonTask<Object>() {
+                   Long ret = jepTemplate.submit(new PythonTask<Long>() {
 
                        @Override
-                       public Object run(Interpreter interpreter) throws Exception {
-                           log.info("python task run: {}", Thread.currentThread().getName());
+                       public Long run(Interpreter interpreter) throws Exception {
                            interpreter.set("a", 1);
                            interpreter.set("b", 1);
                            interpreter.exec("c = a + b");
-                           return interpreter.getValue("c");
+                           return (Long) interpreter.getValue("c");
                        }
                    }).get();
-                   log.info("ret: {}", o);
+                   Assertions.assertEquals(2, ret);
                } catch (Exception e) {
                    log.error("script execution failed", e);
                } finally {

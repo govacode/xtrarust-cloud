@@ -5,7 +5,7 @@ import org.springframework.util.Assert;
 
 import java.util.Map;
 
-public class ScriptValidationTask implements PythonTask<ScriptValidationResult> {
+public final class ScriptValidationTask implements PythonTask<ScriptValidationResult> {
 
     private static final String VALIDATION_SCRIPT = """
             def validate_script(code):

@@ -5,6 +5,7 @@ import jep.JepConfig;
 import jep.SharedInterpreter;
 import lombok.extern.apachecommons.CommonsLog;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.env.EnvironmentPostProcessor;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -12,7 +13,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import java.util.concurrent.CompletableFuture;
 
 @CommonsLog
-public class JepTemplate implements EnvironmentPostProcessor, DisposableBean {
+public class JepTemplate implements EnvironmentPostProcessor, InitializingBean, DisposableBean {
 
     private final JepProperties properties;
 
@@ -34,6 +35,15 @@ public class JepTemplate implements EnvironmentPostProcessor, DisposableBean {
             properties.getIncludePaths().forEach(config::addIncludePaths);
         }
         SharedInterpreter.setConfig(config);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        try {
+            this.jepExecutorGroup.submit(new PrintPythonInfoTask());
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     @Override
