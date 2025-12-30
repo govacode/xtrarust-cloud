@@ -23,8 +23,8 @@ public class MailAutoConfiguration {
         account.setPort(mailProperties.getPort());
         account.setAuth(mailProperties.getAuth());
         account.setFrom(mailProperties.getFrom());
-        account.setUser(mailProperties.getUser());
-        account.setPass(mailProperties.getPass());
+        account.setUser(mailProperties.getUsername());
+        account.setPass(mailProperties.getPassword());
         account.setSocketFactoryPort(mailProperties.getPort());
         account.setStarttlsEnable(mailProperties.getStarttlsEnable());
         account.setSslEnable(mailProperties.getSslEnable());

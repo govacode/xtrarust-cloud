@@ -37,12 +37,12 @@ public class MailProperties {
     /**
      * 用户名
      */
-    private String user;
+    private String username;
 
     /**
      * 密码
      */
-    private String pass;
+    private String password;
 
     /**
      * 发送方，遵循RFC-822标准<br>
