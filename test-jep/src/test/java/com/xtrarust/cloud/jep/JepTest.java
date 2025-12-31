@@ -39,15 +39,11 @@ public class JepTest {
         for (int i = 0; i < 10000; i++) {
             executorService.execute(() -> {
                try {
-                   Long ret = jepTemplate.submit(new PythonTask<Long>() {
-
-                       @Override
-                       public Long run(Interpreter interpreter) throws Exception {
-                           interpreter.set("a", 1);
-                           interpreter.set("b", 1);
-                           interpreter.exec("c = a + b");
-                           return (Long) interpreter.getValue("c");
-                       }
+                   Long ret = jepTemplate.submit(interpreter -> {
+                       interpreter.set("a", 1);
+                       interpreter.set("b", 1);
+                       interpreter.exec("c = a + b");
+                       return (Long) interpreter.getValue("c");
                    }).get();
                    Assertions.assertEquals(2, ret);
                } catch (Exception e) {

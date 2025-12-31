@@ -1,6 +1,9 @@
 package com.xtrarust.cloud.jep.core;
 
+import jep.Jep;
+import jep.JepException;
 import jep.SharedInterpreter;
+import jep.SubInterpreter;
 import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.concurrent.CompletableFuture;
@@ -21,11 +24,13 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
     private static final String INIT_SCRIPT = """
             import sys, gc
-            __builtins__['_jep_white_list'] = set(globals().keys())
+            target = __builtins__ if isinstance(__builtins__, dict) else __builtins__.__dict__
+            target['_jep_white_list'] = set(globals().keys())
             """;
 
     private static final String CLEANUP_SCRIPT = """
-            white_list = __builtins__.get('_jep_white_list')
+            target = __builtins__ if isinstance(__builtins__, dict) else __builtins__.__dict__
+            white_list = target.get('_jep_white_list')
             for k in list(globals().keys()):
                 if white_list and k not in white_list:
                     try:
@@ -35,7 +40,8 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
             """;
 
     private static final String CLEANUP_AND_GC_SCRIPT = """
-            white_list = __builtins__.get('_jep_white_list')
+            target = __builtins__ if isinstance(__builtins__, dict) else __builtins__.__dict__
+            white_list = target.get('_jep_white_list')
             for k in list(globals().keys()):
                 if white_list and k not in white_list:
                     try:
@@ -47,7 +53,7 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
     private final ExecutorService executor;
 
-    private SharedInterpreter interpreter;
+    private Jep interpreter;
 
     private final AtomicInteger taskCount = new AtomicInteger(0);
 
@@ -55,21 +61,23 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
     private volatile boolean isShuttingDown = false;
 
-    public SingleThreadJepExecutor(JepExecutorGroup parent, ThreadFactory threadFactory) {
-        this(parent, threadFactory, new ThreadPoolExecutor.AbortPolicy());
+    public SingleThreadJepExecutor(JepExecutorGroup parent, boolean useSubInterpreter, ThreadFactory threadFactory) {
+        this(parent, useSubInterpreter, threadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
 
-    public SingleThreadJepExecutor(JepExecutorGroup parent, ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
+    public SingleThreadJepExecutor(JepExecutorGroup parent, boolean useSubInterpreter, ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
         super(parent);
         this.executor = new ThreadPoolExecutor(1, 1,
                 0L, TimeUnit.MILLISECONDS,
                 new LinkedBlockingQueue<>(),
                 threadFactory, rejectedHandler);
         CountDownLatch latch = new CountDownLatch(1);
-        executor.execute(() -> {
+        this.executor.execute(() -> {
             try {
-                this.interpreter = new SharedInterpreter();
+                this.interpreter = useSubInterpreter ? new SubInterpreter() : new SharedInterpreter();
                 this.interpreter.exec(INIT_SCRIPT);
+            } catch (JepException e) {
+                throw new RuntimeException("Jep initialization failed", e);
             } finally {
                 latch.countDown();
             }

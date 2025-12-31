@@ -16,12 +16,17 @@ public class JepProperties {
     private boolean enabled = false;
 
     /**
-     * Python 模块搜索路径 (sys.path)
+     * 是否使用 SubInterpreter
      */
-    private List<String> includePaths = new ArrayList<>();
+    private boolean useSubInterpreter = false;
 
     /**
      * 执行线程数
      */
     private int threads = 1;
+
+    /**
+     * Python 模块搜索路径 (sys.path)
+     */
+    private List<String> includePaths = new ArrayList<>();
 }

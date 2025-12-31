@@ -13,7 +13,7 @@ public class JepTemplate implements InitializingBean, DisposableBean {
     private final JepExecutorGroup jepExecutorGroup;
 
     public JepTemplate(JepProperties properties) {
-        this.jepExecutorGroup = new DefaultJepExecutorGroup(properties.getThreads());
+        this.jepExecutorGroup = new DefaultJepExecutorGroup(properties.isUseSubInterpreter(), properties.getThreads());
     }
 
     public <T> CompletableFuture<T> submit(PythonTask<T> pythonTask) {

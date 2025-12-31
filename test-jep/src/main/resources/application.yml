@@ -1,3 +1,4 @@
 jep:
   enabled: true
-  threads: 1
+  use-sub-interpreter: true
+  threads: 8

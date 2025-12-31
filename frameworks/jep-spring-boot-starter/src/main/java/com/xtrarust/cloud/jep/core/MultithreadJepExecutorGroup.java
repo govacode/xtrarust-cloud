@@ -13,15 +13,15 @@ public abstract class MultithreadJepExecutorGroup implements JepExecutorGroup {
 
     private final JepExecutorChooserFactory.JepExecutorChooser chooser;
 
-    protected MultithreadJepExecutorGroup(int nThreads) {
-        this(nThreads, null);
+    protected MultithreadJepExecutorGroup(boolean useSubInterpreter, int nThreads) {
+        this(useSubInterpreter, nThreads, null);
     }
 
-    protected MultithreadJepExecutorGroup(int nThreads, ThreadFactory threadFactory) {
-        this(nThreads, threadFactory, DefaultJepExecutorChooserFactory.INSTANCE);
+    protected MultithreadJepExecutorGroup(boolean useSubInterpreter, int nThreads, ThreadFactory threadFactory) {
+        this(useSubInterpreter, nThreads, threadFactory, DefaultJepExecutorChooserFactory.INSTANCE);
     }
 
-    protected MultithreadJepExecutorGroup(int nThreads, ThreadFactory threadFactory, JepExecutorChooserFactory chooserFactory) {
+    protected MultithreadJepExecutorGroup(boolean useSubInterpreter, int nThreads, ThreadFactory threadFactory, JepExecutorChooserFactory chooserFactory) {
         if (nThreads <= 0) {
             throw new IllegalArgumentException("nThreads must be greater than 0");
         }
@@ -32,7 +32,7 @@ public abstract class MultithreadJepExecutorGroup implements JepExecutorGroup {
         for (int i = 0; i < nThreads; i ++) {
             boolean success = false;
             try {
-                children[i] = newChild(threadFactory);
+                children[i] = newChild(useSubInterpreter, threadFactory);
                 success = true;
             } catch (Exception e) {
                 // TODO: Think about if this is a good exception type
@@ -65,7 +65,7 @@ public abstract class MultithreadJepExecutorGroup implements JepExecutorGroup {
         return new DefaultThreadFactory(getClass());
     }
 
-    protected abstract JepExecutor newChild(ThreadFactory threadFactory) throws Exception;
+    protected abstract JepExecutor newChild(boolean useSubInterpreter, ThreadFactory threadFactory) throws Exception;
 
     @Override
     public JepExecutor next() {
