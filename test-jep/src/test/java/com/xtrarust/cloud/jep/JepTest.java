@@ -1,10 +1,8 @@
 package com.xtrarust.cloud.jep;
 
 import com.xtrarust.cloud.jep.core.JepTemplate;
-import com.xtrarust.cloud.jep.core.PythonTask;
 import com.xtrarust.cloud.jep.core.ScriptValidationResult;
 import com.xtrarust.cloud.jep.core.ScriptValidationTask;
-import jep.Interpreter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
