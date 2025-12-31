@@ -1,2 +1,2 @@
 org.springframework.boot.env.EnvironmentPostProcessor=\
-com.xtrarust.cloud.jep.config.JepConfigEnvironmentPostProcessor
+com.xtrarust.cloud.jep.config.JepSharedInterpreterConfigEnvironmentPostProcessor

@@ -1,9 +1,6 @@
 package com.xtrarust.cloud.jep.core;
 
-import jep.Jep;
-import jep.JepException;
-import jep.SharedInterpreter;
-import jep.SubInterpreter;
+import jep.*;
 import lombok.extern.apachecommons.CommonsLog;
 
 import java.util.concurrent.CompletableFuture;
@@ -61,11 +58,11 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
     private volatile boolean isShuttingDown = false;
 
-    public SingleThreadJepExecutor(JepExecutorGroup parent, boolean useSubInterpreter, ThreadFactory threadFactory) {
-        this(parent, useSubInterpreter, threadFactory, new ThreadPoolExecutor.AbortPolicy());
+    public SingleThreadJepExecutor(JepExecutorGroup parent, boolean useSubInterpreter, JepConfig config, ThreadFactory threadFactory) {
+        this(parent, useSubInterpreter, config, threadFactory, new ThreadPoolExecutor.AbortPolicy());
     }
 
-    public SingleThreadJepExecutor(JepExecutorGroup parent, boolean useSubInterpreter, ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
+    public SingleThreadJepExecutor(JepExecutorGroup parent, boolean useSubInterpreter, JepConfig config, ThreadFactory threadFactory, RejectedExecutionHandler rejectedHandler) {
         super(parent);
         this.executor = new ThreadPoolExecutor(1, 1,
                 0L, TimeUnit.MILLISECONDS,
@@ -74,7 +71,13 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
         CountDownLatch latch = new CountDownLatch(1);
         this.executor.execute(() -> {
             try {
-                this.interpreter = useSubInterpreter ? new SubInterpreter() : new SharedInterpreter();
+                Jep jep;
+                if (useSubInterpreter) {
+                    jep = new SubInterpreter(config);
+                } else {
+                    jep = new SharedInterpreter();
+                }
+                this.interpreter = jep;
                 this.interpreter.exec(INIT_SCRIPT);
             } catch (JepException e) {
                 throw new RuntimeException("Jep initialization failed", e);

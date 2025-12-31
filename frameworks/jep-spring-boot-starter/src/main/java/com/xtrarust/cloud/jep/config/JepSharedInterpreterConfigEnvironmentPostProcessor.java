@@ -13,13 +13,17 @@ import org.springframework.util.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class JepConfigEnvironmentPostProcessor implements EnvironmentPostProcessor {
+public class JepSharedInterpreterConfigEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
         Binder binder = Binder.get(environment);
         Boolean jepEnabled = binder.bind("jep.enabled", Bindable.of(Boolean.class)).orElse(Boolean.FALSE);
         if (Boolean.FALSE.equals(jepEnabled)) {
+            return;
+        }
+        Boolean useSubInterpreter = binder.bind("jep.use-sub-interpreter", Bindable.of(Boolean.class)).orElse(Boolean.FALSE);
+        if (Boolean.TRUE.equals(useSubInterpreter)) {
             return;
         }
         List<String> includePaths = binder.bind("jep.include-paths", Bindable.listOf(String.class)).orElse(Collections.emptyList());

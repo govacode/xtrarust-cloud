@@ -20,7 +20,6 @@ public class JepTest {
     @Autowired
     private JepTemplate jepTemplate;
 
-    // 2760
     @Test
     public void test() throws Exception {
         ExecutorService executorService = Executors.newFixedThreadPool(10);
