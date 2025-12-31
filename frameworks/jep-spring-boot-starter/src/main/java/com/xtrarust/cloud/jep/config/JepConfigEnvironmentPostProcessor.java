@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import java.util.Collections;
 import java.util.List;
 
-public class JepSharedInterpreterConfigEnvironmentPostProcessor implements EnvironmentPostProcessor {
+public class JepConfigEnvironmentPostProcessor implements EnvironmentPostProcessor {
 
     @Override
     public void postProcessEnvironment(ConfigurableEnvironment environment, SpringApplication application) {
