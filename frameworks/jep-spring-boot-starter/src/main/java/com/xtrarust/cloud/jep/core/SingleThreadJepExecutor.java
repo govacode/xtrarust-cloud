@@ -11,10 +11,13 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 @CommonsLog
 public class SingleThreadJepExecutor extends AbstractJepExecutor {
+
+    private static final int GC_THRESHOLD = 1000;
 
     private static final String INIT_SCRIPT = """
             import sys, gc
@@ -29,12 +32,24 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
                         del globals()[k]
                     except:
                         pass
+            """;
+
+    private static final String CLEANUP_AND_GC_SCRIPT = """
+            white_list = __builtins__.get('_jep_white_list')
+            for k in list(globals().keys()):
+                if white_list and k not in white_list:
+                    try:
+                        del globals()[k]
+                    except:
+                        pass
             gc.collect()
             """;
 
     private final ExecutorService executor;
 
     private SharedInterpreter interpreter;
+
+    private final AtomicInteger taskCount = new AtomicInteger(0);
 
     private final AtomicLong lastTaskEndTime = new AtomicLong(System.nanoTime());
 
@@ -83,24 +98,30 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
             throw new PythonTaskFailedException("Jep executor is shutting down");
         }
         return CompletableFuture.supplyAsync(() -> {
+            boolean gc = false;
             try {
-                long start = System.currentTimeMillis();
                 T result = pythonTask.run(interpreter);
-                log.info("python script execution end, elapsed: " + (System.currentTimeMillis() - start) + "ms");
+                if (taskCount.incrementAndGet() >= GC_THRESHOLD) {
+                    gc = true;
+                }
                 return result;
             } catch (Exception e) {
                 throw new PythonTaskFailedException("Python script execution failed", e);
             } finally {
-                cleanup();
+                cleanup(gc);
                 // 任务执行完，更新静默期计时起点
                 lastTaskEndTime.set(System.nanoTime());
             }
         }, this.executor);
     }
 
-    private void cleanup() {
+    private void cleanup(boolean gc) {
         try {
-            this.interpreter.exec(CLEANUP_SCRIPT);
+            if (gc) {
+                this.interpreter.exec(CLEANUP_AND_GC_SCRIPT);
+            } else {
+                this.interpreter.exec(CLEANUP_SCRIPT);
+            }
         } catch (Exception e) {
             log.warn("Jep interpreter cleanup failed", e);
         }
