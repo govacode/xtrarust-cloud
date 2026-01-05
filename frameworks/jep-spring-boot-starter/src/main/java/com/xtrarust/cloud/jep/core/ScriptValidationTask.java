@@ -1,38 +1,27 @@
 package com.xtrarust.cloud.jep.core;
 
 import jep.Interpreter;
-import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 
 import java.util.Map;
 
-public final class ScriptValidationTask implements PythonTask<ScriptValidationResult> {
+import static com.xtrarust.cloud.jep.core.SingleThreadJepExecutor.VALIDATE_FN;
 
-    private static final String VALIDATION_SCRIPT = """
-            def validate_script(code):
-                try:
-                    compile(code, '<string>', 'exec')
-                    return None
-                except SyntaxError as e:
-                    return {
-                        "lineno": e.lineno,
-                        "offset": e.offset,
-                        "msg": e.msg,
-                        "text": e.text.strip() if e.text else ""
-                    }
-            """;
+public final class ScriptValidationTask implements PythonTask<ScriptValidationResult> {
 
     private final String script;
 
     public ScriptValidationTask(String script) {
-        Assert.notNull(script, "script must not be null");
         this.script = script;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public ScriptValidationResult run(Interpreter interpreter) throws Exception {
-        interpreter.exec(VALIDATION_SCRIPT);
-        Map<String, Object> map = (Map<String, Object>) interpreter.invoke("validate_script", script);
+        if (!StringUtils.hasText(this.script)) {
+            return ScriptValidationResult.pass();
+        }
+        Map<String, Object> map = (Map<String, Object>) interpreter.invoke(VALIDATE_FN, script);
         if (map == null || map.isEmpty()) {
             return ScriptValidationResult.pass();
         }

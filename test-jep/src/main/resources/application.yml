@@ -1,6 +1,6 @@
 jep:
   enabled: true
   use-sub-interpreter: true
-  threads: 16
-  shared-modules:
-    - numpy
+  threads: 2
+#  shared-modules:
+#    - numpy

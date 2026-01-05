@@ -12,6 +12,9 @@ public class DefaultJepExecutorChooserFactory implements JepExecutorChooserFacto
 
     @Override
     public JepExecutorChooser newChooser(JepExecutor[] executors) {
+        if (executors.length == 1) {
+            return () -> executors[0];
+        }
         if (isPowerOfTwo(executors.length)) {
             return new PowerOfTwoJepExecutorChooser(executors);
         } else {

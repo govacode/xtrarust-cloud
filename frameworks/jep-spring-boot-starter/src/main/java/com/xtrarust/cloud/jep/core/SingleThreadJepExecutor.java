@@ -17,42 +17,44 @@ import java.util.concurrent.atomic.AtomicLong;
 @CommonsLog
 public class SingleThreadJepExecutor extends AbstractJepExecutor {
 
-    private static final int GC_THRESHOLD = 1000;
+    private static final int FULL_GC_THRESHOLD = 1000;
+
+    private static final String CLEANUP_FN = "__jep_internal_cleanup__";
+
+    public static final String VALIDATE_FN = "__jep_internal_validate__";
 
     private static final String INIT_SCRIPT = """
             import sys, gc
-            target = __builtins__ if isinstance(__builtins__, dict) else __builtins__.__dict__
-            target['_jep_white_list'] = set(globals().keys())
-            """;
+            __JEP_WHITE_LIST__ = set(globals().keys()) | {'__JEP_WHITE_LIST__', '__jep_internal_cleanup__', '__jep_internal_validate__'}
 
-    private static final String CLEANUP_SCRIPT = """
-            target = __builtins__ if isinstance(__builtins__, dict) else __builtins__.__dict__
-            white_list = target.get('_jep_white_list')
-            for k in list(globals().keys()):
-                if white_list and k not in white_list:
-                    try:
-                        del globals()[k]
-                    except:
-                        pass
-            """;
-
-    private static final String CLEANUP_AND_GC_SCRIPT = """
-            target = __builtins__ if isinstance(__builtins__, dict) else __builtins__.__dict__
-            white_list = target.get('_jep_white_list')
-            for k in list(globals().keys()):
-                if white_list and k not in white_list:
-                    try:
-                        del globals()[k]
-                    except:
-                        pass
-            gc.collect()
+            def __jep_internal_cleanup__():
+                v_white = globals().get('__JEP_WHITE_LIST__')
+                if not v_white:
+                    return
+                for k in list(globals().keys()):
+                    if k not in v_white:
+                        try:
+                            del globals()[k]
+                        except:
+                            pass
+            def __jep_internal_validate__(code):
+                try:
+                    compile(code, '<string>', 'exec')
+                    return None
+                except SyntaxError as e:
+                    return {
+                        "lineno": e.lineno,
+                        "offset": e.offset,
+                        "msg": e.msg,
+                        "text": e.text.strip() if e.text else ""
+                    }
             """;
 
     private final ExecutorService executor;
 
     private Jep interpreter;
 
-    private final AtomicInteger taskCount = new AtomicInteger(0);
+    private final AtomicInteger taskCounter = new AtomicInteger(0);
 
     private final AtomicLong lastTaskEndTime = new AtomicLong(System.nanoTime());
 
@@ -109,29 +111,32 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
             throw new PythonTaskFailedException("Jep executor is shutting down");
         }
         return CompletableFuture.supplyAsync(() -> {
-            boolean gc = false;
+            boolean fullGC = false;
             try {
+                int taskCount = taskCounter.incrementAndGet();
                 T result = pythonTask.run(interpreter);
-                if (taskCount.incrementAndGet() >= GC_THRESHOLD) {
-                    gc = true;
+                if (taskCount >= FULL_GC_THRESHOLD) {
+                    fullGC = true;
+                    taskCounter.set(0);
                 }
                 return result;
             } catch (Exception e) {
                 throw new PythonTaskFailedException("Python script execution failed", e);
             } finally {
-                cleanup(gc);
+                cleanup(fullGC);
                 // 任务执行完，更新静默期计时起点
                 lastTaskEndTime.set(System.nanoTime());
             }
         }, this.executor);
     }
 
-    private void cleanup(boolean gc) {
+    private void cleanup(boolean fullGC) {
         try {
-            if (gc) {
-                this.interpreter.exec(CLEANUP_AND_GC_SCRIPT);
+            this.interpreter.invoke(CLEANUP_FN);
+            if (fullGC) {
+                this.interpreter.exec("gc.collect(2)");
             } else {
-                this.interpreter.exec(CLEANUP_SCRIPT);
+                this.interpreter.exec("gc.collect(0)");
             }
         } catch (Exception e) {
             log.warn("Jep interpreter cleanup failed", e);

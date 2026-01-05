@@ -22,7 +22,7 @@ public class JepTest {
 
     @Test
     public void test() throws Exception {
-        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor();
         CountDownLatch latch = new CountDownLatch(10000);
         long start = System.currentTimeMillis();
 
