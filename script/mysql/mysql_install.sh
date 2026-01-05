@@ -409,11 +409,11 @@ max_user_connections                                        = 256
 max_connect_errors                                          = 1000000
 back_log                                                    = 1024
 max_allowed_packet                                          = 64M
-# ------------------------------ table cache performance settings ------------------------------
+# ------------------------------ table cache performance ------------------------------
 table_open_cache                                            = 4096
 table_definition_cache                                      = 4096
 table_open_cache_instances                                  = 64
-# ------------------------------ session memory settings ------------------------------
+# ------------------------------ session memory ------------------------------
 sort_buffer_size                                            = 4M
 join_buffer_size                                            = 4M
 read_buffer_size                                            = 8M
@@ -434,7 +434,7 @@ EOF
     fi
 
     cat >> ${mysql_config_file} << EOF
-# ------------------------------ log settings ------------------------------
+# ------------------------------ log ------------------------------
 log_output                                                  = FILE
 general_log                                                 = OFF
 general_log_file                                            = general.log
@@ -471,7 +471,7 @@ binlog_space_limit                                          = 500G
 binlog_expire_logs_auto_purge                               = ON
 binlog_expire_logs_seconds                                  = 604800 # binlog过期时间，默认2592000s(30*24*60*60) 8.0用于替换expire_logs_days参数
 log_bin_trust_function_creators                             = ON
-# ------------------------------ perforamnce_schema ------------------------------
+# ------------------------------ performance schema ------------------------------
 performance_schema                                          = ON
 performance-schema-instrument                               = lock=ON # wait/lock/metadata/sql/mdl=ON
 # ------------------------------ MyISAM ------------------------------
