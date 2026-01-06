@@ -213,7 +213,7 @@ install_mysql_dependency_packages() {
     tar -jxf jemalloc-${jemalloc_version}.tar.bz2 > /dev/null
     pushd jemalloc-${jemalloc_version} > /dev/null
     ./autogen.sh
-    make -j2 && make install
+    make -j$(nproc) && make install
     popd > /dev/null
 
     if [ -f "/usr/local/lib/libjemalloc.so" ]; then
