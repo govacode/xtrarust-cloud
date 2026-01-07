@@ -1,8 +1,8 @@
 #!/bin/bash
 # =================================================================
-# Nginx 1.28.0 高性能自动化安装脚本
+# Nginx 自动化安装脚本
 # 支持系统: Ubuntu / CentOS 7+
-# 集成模块: Jemalloc, Brotli, Cache_Purge, Http_Concat
+# 集成模块: Brotli, Cache_Purge, Http_Concat, VTS
 # =================================================================
 set -e
 
@@ -10,6 +10,7 @@ NGINX_VERSION="1.28.1"
 JEMALLOC_VERSION="5.3.0"
 HTTP_CONCAT_VERSION="1.2.2"
 CACHE_PURGE_VERSION="2.3"
+VTS_VERSION="0.2.5"
 
 INSTALL_DIR="/usr/local/nginx"
 NGINX_USER="nginx"
@@ -49,6 +50,7 @@ prepare_sources() {
     ["jemalloc-${JEMALLOC_VERSION}.tar.bz2"]="https://github.com/jemalloc/jemalloc/releases/download/${JEMALLOC_VERSION}/jemalloc-${JEMALLOC_VERSION}.tar.bz2"
     ["nginx-http-concat-${HTTP_CONCAT_VERSION}.tar.gz"]="https://github.com/alibaba/nginx-http-concat/archive/refs/tags/${HTTP_CONCAT_VERSION}.tar.gz"
     ["ngx_cache_purge-${CACHE_PURGE_VERSION}.tar.gz"]="https://github.com/FRiCKLE/ngx_cache_purge/archive/refs/tags/${CACHE_PURGE_VERSION}.tar.gz"
+    ["nginx-module-vts-${VTS_VERSION}.tar.gz"]="https://github.com/vozlt/nginx-module-vts/archive/refs/tags/v${VTS_VERSION}.tar.gz"
   )
 
   for file in "${!urls[@]}"; do
@@ -92,9 +94,10 @@ install_nginx() {
   log "开始 Nginx 编译流程..."
 
   # 准备第三方模块
-  rm -rf nginx-http-concat ngx_cache_purge
+  rm -rf nginx-http-concat ngx_cache_purge nginx-module-vts
   tar xzf "nginx-http-concat-${HTTP_CONCAT_VERSION}.tar.gz" && mv "nginx-http-concat-${HTTP_CONCAT_VERSION}" nginx-http-concat
   tar xzf "ngx_cache_purge-${CACHE_PURGE_VERSION}.tar.gz" && mv "ngx_cache_purge-${CACHE_PURGE_VERSION}" ngx_cache_purge
+  tar xzf "nginx-module-vts-${VTS_VERSION}.tar.gz" && mv "nginx-module-vts-${VTS_VERSION}" nginx-module-vts
 
   # 预编译 Brotli
   pushd ngx_brotli/deps/brotli >/dev/null
@@ -126,6 +129,7 @@ install_nginx() {
           --add-module=../ngx_brotli \
           --add-module=../nginx-http-concat \
           --add-module=../ngx_cache_purge \
+          --add-module=../nginx-module-vts \
           --with-ld-opt='-ljemalloc'
 
   make -j$(nproc) && make install
