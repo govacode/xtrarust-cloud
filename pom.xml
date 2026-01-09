@@ -91,7 +91,6 @@
         <module>design-patterns</module>
         <module>examples</module>
         <module>message-resource</module>
-        <module>test-jep</module>
     </modules>
 
     <dependencyManagement>

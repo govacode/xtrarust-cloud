@@ -150,15 +150,12 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
         long timeoutNanos = unit.toNanos(timeout);
         long deadline = System.nanoTime() + timeoutNanos;
 
-        // 1. 尝试进入静默期观察周期
         while (true) {
             long now = System.nanoTime();
-            // 如果空闲时间超过了静默期，或者整体到了截止时间，则跳出观察
             if (now - lastTaskEndTime.get() >= quietPeriodNanos || now >= deadline) {
                 break;
             }
 
-            // 等待一小段时间继续观察
             try {
                 TimeUnit.MILLISECONDS.sleep(100);
             } catch (InterruptedException e) {
@@ -167,7 +164,6 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
             }
         }
 
-        // 2. 真正关闭：先停止接收新任务，再等待旧任务完成
         executor.execute(() -> {
             try {
                 if (interpreter != null) {
@@ -179,7 +175,6 @@ public class SingleThreadJepExecutor extends AbstractJepExecutor {
         });
         executor.shutdown();
         try {
-            // 等待线程池彻底终止
             long remaining = deadline - System.nanoTime();
             if (!executor.awaitTermination(Math.max(0, remaining), TimeUnit.NANOSECONDS)) {
                 executor.shutdownNow();

@@ -1,6 +1,0 @@
-jep:
-  enabled: true
-  use-sub-interpreter: true
-  threads: 2
-#  shared-modules:
-#    - numpy
