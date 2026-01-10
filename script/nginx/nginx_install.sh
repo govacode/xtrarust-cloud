@@ -78,14 +78,14 @@ install_jemalloc() {
     log "Jemalloc 已安装"
   else
     log "编译 Jemalloc..."
-    tar -jxf "jemalloc-${JEMALLOC_VER}.tar.bz2"
-    pushd "jemalloc-${JEMALLOC_VER}" >/dev/null
+    tar -jxf "jemalloc-${JEMALLOC_VERSION}.tar.bz2"
+    pushd "jemalloc-${JEMALLOC_VERSION}" >/dev/null
     ./autogen.sh
     # shellcheck disable=SC2046
     make -j$(nproc) && make install
     echo '/usr/local/lib' > /etc/ld.so.conf.d/local.conf && ldconfig
     popd >/dev/null
-    rm -rf "jemalloc-${JEMALLOC_VER}"
+    rm -rf "jemalloc-${JEMALLOC_VERSION}"
   fi
 }
 
