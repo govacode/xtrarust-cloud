@@ -710,7 +710,7 @@ modify_root_pwd() {
   log "设置MySQL基础用户密码并创建复制用户..."
   mysql -S ${mysql_socket_file} -p"${mysql_random_password}" --connect-expired-password <<EOF
 ALTER USER 'root'@'localhost' IDENTIFIED BY '${mysql_password}';
-CREATE USER 'root'@'%' IDENTIFIED BY '${mysql_password}';
+CREATE USER 'root'@'%' IDENTIFIED BY '${mysql_password}' REQUIRE SSL;;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'%';
 CREATE USER 'repl'@'%' IDENTIFIED BY 'repl@123';
 GRANT REPLICATION SLAVE ON *.* TO 'repl'@'%';
