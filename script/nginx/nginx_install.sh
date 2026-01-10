@@ -158,7 +158,6 @@ ExecStartPre=${INSTALL_DIR}/sbin/nginx -t -c ${INSTALL_DIR}/conf/nginx.conf
 ExecStart=${INSTALL_DIR}/sbin/nginx -c ${INSTALL_DIR}/conf/nginx.conf
 ExecReload=${INSTALL_DIR}/sbin/nginx -s reload
 ExecStop=${INSTALL_DIR}/sbin/nginx -s stop
-ExecQuit=${INSTALL_DIR}/sbin/nginx -s quit
 PrivateTmp=true
 
 [Install]
