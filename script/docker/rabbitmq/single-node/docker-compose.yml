@@ -1,0 +1,21 @@
+version: '3'
+services:
+  rabbitmq:
+    image: rabbitmq:4.2.0-management-delay
+    container_name: rabbitmq
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    hostname: rabbit
+    restart: always
+    environment:
+      TZ: Asia/Shanghai
+      LANG: en_US.UTF-8
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin@123
+    volumes:
+      - "./data:/var/lib/rabbitmq/mnesia"
+      - "./logs:/var/log/rabbitmq"
+    ports:
+      - "5672:5672"
+      - "15672:15672"

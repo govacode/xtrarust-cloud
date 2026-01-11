@@ -36,3 +36,7 @@ build/
 
 ### MacOS ###
 .DS_Store
+
+### Docker ###
+script/docker/**/data
+script/docker/**/logs

@@ -1,0 +1,95 @@
+services:
+  rabbitmq1:
+    image: rabbitmq:4.2.0-management-delay
+    container_name: rabbitmq1
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    hostname: rabbitmq1
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin@123
+      - RABBITMQ_ERLANG_COOKIE=NzvP0LMLjSwon5OdzjVr # erlang cookie
+      - RABBITMQ_NODENAME=rabbitmq1 # 节点名称
+      - RABBITMQ_CLUSTERED=true
+      - RABBITMQ_CLUSTER_NODE_TYPE=disc # 节点类型
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.7 # 内存高水位
+      - RABBITMQ_CLUSTER_PARTITION_HANDLING=pause_minority # 网络分区处理
+      - RABBITMQ_DEFAULT_HA_MODE=exactly # 镜像队列相关
+      - RABBITMQ_DEFAULT_HA_PARAMS=2
+      - RABBITMQ_DEFAULT_HA_SYNC_MODE=automatic
+    volumes:
+      - "./rabbitmq1/data:/var/lib/rabbitmq/mnesia"
+      - "./rabbitmq1/logs:/var/log/rabbitmq"
+    networks:
+      - rabbitmq-cluster
+
+  rabbitmq2:
+    image: rabbitmq:4.2.0-management-delay
+    container_name: rabbitmq2
+    hostname: rabbitmq2
+    ports:
+      - "5673:5672"
+      - "15673:15672"
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin@123
+      - RABBITMQ_ERLANG_COOKIE=NzvP0LMLjSwon5OdzjVr
+      - RABBITMQ_NODENAME=rabbitmq2
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbitmq1  # 加入 rabbitmq1 的集群
+      - RABBITMQ_CLUSTERED=true
+      - RABBITMQ_CLUSTER_NODE_TYPE=disc
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.7
+      - RABBITMQ_CLUSTER_PARTITION_HANDLING=pause_minority
+      - RABBITMQ_DEFAULT_HA_MODE=exactly
+      - RABBITMQ_DEFAULT_HA_PARAMS=2
+      - RABBITMQ_DEFAULT_HA_SYNC_MODE=automatic
+    volumes:
+      - "./rabbitmq2/data:/var/lib/rabbitmq/mnesia"
+      - "./rabbitmq2/logs:/var/log/rabbitmq"
+    networks:
+      - rabbitmq-cluster
+    depends_on:
+      - rabbitmq1
+
+  rabbitmq3:
+    image: rabbitmq:4.2.0-management-delay
+    container_name: rabbitmq3
+    hostname: rabbitmq3
+    ports:
+      - "5674:5672"
+      - "15674:15672"
+    environment:
+      - TZ=Asia/Shanghai
+      - LANG=en_US.UTF-8
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin@123
+      - RABBITMQ_ERLANG_COOKIE=NzvP0LMLjSwon5OdzjVr
+      - RABBITMQ_NODENAME=rabbitmq3
+      - RABBITMQ_CLUSTER_NODE_NAME=rabbitmq1  # 加入 rabbitmq1 的集群
+      - RABBITMQ_CLUSTERED=true
+      - RABBITMQ_CLUSTER_NODE_TYPE=disc
+      - RABBITMQ_CLUSTER_FORMATION=classic_config
+      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.7
+      - RABBITMQ_CLUSTER_PARTITION_HANDLING=pause_minority
+      - RABBITMQ_DEFAULT_HA_MODE=exactly
+      - RABBITMQ_DEFAULT_HA_PARAMS=2
+      - RABBITMQ_DEFAULT_HA_SYNC_MODE=automatic
+    volumes:
+      - "./rabbitmq3/data:/var/lib/rabbitmq/mnesia"
+      - "./rabbitmq3/logs:/var/log/rabbitmq"
+    networks:
+      - rabbitmq-cluster
+    depends_on:
+      - rabbitmq1
+
+networks:
+  rabbitmq-cluster:
+    driver: bridge
