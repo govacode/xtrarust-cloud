@@ -38,5 +38,9 @@ build/
 .DS_Store
 
 ### Docker ###
-script/docker/**/data
-script/docker/**/logs
+script/docker/**/data/**/*
+script/docker/**/logs/**/*
+script/docker/**/enabled_plugins/**/*
+!script/docker/**/data/
+!script/docker/**/logs/
+!script/docker/**/enabled_plugins/

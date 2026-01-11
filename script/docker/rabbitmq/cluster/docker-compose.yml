@@ -26,6 +26,7 @@ services:
     volumes:
       - "./rabbitmq1/data:/var/lib/rabbitmq/mnesia"
       - "./rabbitmq1/logs:/var/log/rabbitmq"
+      - "./rabbitmq1/enabled_plugins:/etc/rabbitmq/enabled_plugins"
     networks:
       - rabbitmq-cluster
 
@@ -54,6 +55,7 @@ services:
     volumes:
       - "./rabbitmq2/data:/var/lib/rabbitmq/mnesia"
       - "./rabbitmq2/logs:/var/log/rabbitmq"
+      - "./rabbitmq2/enabled_plugins:/etc/rabbitmq/enabled_plugins"
     networks:
       - rabbitmq-cluster
     depends_on:
@@ -85,6 +87,7 @@ services:
     volumes:
       - "./rabbitmq3/data:/var/lib/rabbitmq/mnesia"
       - "./rabbitmq3/logs:/var/log/rabbitmq"
+      - "./rabbitmq3/enabled_plugins:/etc/rabbitmq/enabled_plugins"
     networks:
       - rabbitmq-cluster
     depends_on:
