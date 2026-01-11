@@ -41,6 +41,8 @@ build/
 script/docker/**/data/**/*
 script/docker/**/logs/**/*
 script/docker/**/enabled_plugins/**/*
+script/docker/**/store/**/*
 !script/docker/**/data/.gitkeep
 !script/docker/**/logs/.gitkeep
 !script/docker/**/enabled_plugins/.gitkeep
+!script/docker/**/store/.gitkeep
