@@ -1,0 +1,12 @@
+apiVersion: 1
+providers:
+  - name: 'Default Dashboards' # 面板分类组的名称
+    orgId: 1
+    folder: ''                 # 放置在根目录（也可以指定文件夹名称）
+    type: file
+    disableDeletion: false     # 是否禁止在 UI 上删除这些自动导入的面板
+    editable: true             # 导入后是否允许在 UI 上编辑
+    options:
+      # 注意：这里的路径必须是【容器内部】的挂载路径
+      # 对应 docker-compose 中 - ./grafana/dashboards:/var/lib/grafana/dashboards 的右侧
+      path: /var/lib/grafana/dashboards

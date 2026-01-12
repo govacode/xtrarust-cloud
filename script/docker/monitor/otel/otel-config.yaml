@@ -1,0 +1,47 @@
+# 接收器 (Receivers): 定义 Collector 如何监听并接收来自应用的数据
+receivers:
+  otlp: # 使用 OTLP 标准协议接收数据
+    protocols:
+      grpc:
+        # 监听所有网卡上的 4317 端口 (gRPC 常用于高性能传输)
+        endpoint: "0.0.0.0:4317"
+      http:
+        # 监听所有网卡上的 4318 端口 (Spring Boot 默认通常使用 HTTP)
+        endpoint: "0.0.0.0:4318"
+
+# 导出器 (Exporters): 定义 Collector 将处理好的数据发送到哪个后端存储
+exporters:
+  # 指标导出器：将数据转换成 Prometheus 能够识别的格式
+  prometheus:
+    # Collector 会在这里启动一个临时的 HTTP 服务，等待 Prometheus 来抓取 (Scrape)
+    endpoint: "0.0.0.0:8889"
+  # 链路导出器：将 Trace 数据转发给 Tempo
+  otlp/tempo:
+    # "tempo" 是 Docker Compose 中服务的名称，4317 是 Tempo 接收 OTLP 的 gRPC 端口
+    endpoint: "tempo:4317"
+    tls:
+      # 因为是内网 Docker 环境，关闭 TLS 加密验证
+      insecure: true
+
+processors:
+  batch:
+    # 达到 1000 个 span/metric 后批量发送
+    send_batch_size: 1000
+    # 或者每隔 200 毫秒强制发送一次（无论是否达到 1000 个）
+    timeout: 200ms
+    # 批处理的最大限制，防止单次请求过载
+    send_batch_max_size: 1500
+
+# 服务流水线 (Service Pipelines): 这是“组装线”，将上面的接收器和导出器串联起来
+service:
+  pipelines:
+    # 指标流水线
+    metrics:
+      receivers: [otlp]         # 从 4317/4318 端口接收指标
+      exporters: [prometheus]   # 转换后交给 Prometheus 抓取端点
+      processors: [batch]
+    # 链路追踪流水线
+    traces:
+      receivers: [otlp]         # 从 4317/4318 端口接收链路
+      exporters: [otlp/tempo]   # 转发给 Tempo 存储
+      processors: [batch]

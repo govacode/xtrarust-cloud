@@ -1,0 +1,57 @@
+services:
+  # OpenTelemetry Collector (中转站)
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.104.0
+    container_name: otel-collector
+    command: ["--config=/etc/otel-config.yaml"]
+    volumes:
+      - ./otel/otel-config.yaml:/etc/otel-config.yaml
+    ports:
+      - "4317:4317" # gRPC 接收
+      - "4318:4318" # HTTP 接收
+      - "8889:8889" # Prometheus 抓取端口
+
+  # Prometheus (指标存储)
+  prometheus:
+    image: prom/prometheus:v2.53.0
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/data:/prometheus
+    ports:
+      - "9090:9090"
+
+  # Tempo (链路存储)
+  tempo:
+    image: grafana/tempo:2.4.1
+    container_name: tempo
+    command: [ "-config.file=/etc/tempo.yaml" ]
+    volumes:
+      - ./tempo/tempo.yaml:/etc/tempo.yaml
+      - ./tempo/data:/var/tempo
+    ports:
+      - "3200:3200"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+
+  # 4. Grafana (可视化)
+  grafana:
+    image: grafana/grafana:11.1.0
+    container_name: grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin@123
+    volumes:
+      - ./grafana/data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3000:3000"
+    user: "472" # 避开 Linux 权限问题
+    depends_on:
+      - prometheus
+      - tempo
