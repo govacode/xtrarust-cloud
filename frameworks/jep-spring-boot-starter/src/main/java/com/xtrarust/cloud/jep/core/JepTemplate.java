@@ -34,6 +34,10 @@ public class JepTemplate implements InitializingBean, DisposableBean {
         this.jepExecutorGroup = new DefaultJepExecutorGroup(useSubInterpreter, config, properties.getThreads());
     }
 
+    public CompletableFuture<ScriptValidationResult> validate(String script) {
+        return submit(new ScriptValidationTask(script));
+    }
+
     public <T> CompletableFuture<T> submit(PythonTask<T> pythonTask) {
         return jepExecutorGroup.submit(pythonTask);
     }
