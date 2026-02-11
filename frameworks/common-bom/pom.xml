@@ -54,7 +54,7 @@
             </dependency>
             <dependency>
                 <groupId>com.xtrarust.cloud</groupId>
-                <artifactId>prometheus-spring-boot-starter</artifactId>
+                <artifactId>monitor-spring-boot-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

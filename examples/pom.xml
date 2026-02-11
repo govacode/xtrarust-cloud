@@ -15,6 +15,7 @@
         <module>kafka</module>
         <module>rocketmq5</module>
         <module>sharding</module>
+        <module>trace-app1</module>
     </modules>
 
     <artifactId>examples</artifactId>

@@ -46,8 +46,6 @@
         <!-- 服务保障相关 -->
         <lock4j.version>2.2.7</lock4j.version>
         <!-- 监控相关 -->
-        <logback-kafka-appender.version>0.2.0-RC2</logback-kafka-appender.version>
-        <skywalking.version>8.12.0</skywalking.version>
         <spring-boot-admin.version>3.5.5</spring-boot-admin.version>
         <!-- excel -->
         <poi.version>5.4.1</poi.version>
@@ -65,7 +63,7 @@
         <commons-net.version>3.12.0</commons-net.version>
         <ip2region.version>3.3.1</ip2region.version>
         <jsoup.version>1.21.2</jsoup.version>
-        <okhttp.version>5.2.1</okhttp.version>
+        <okhttp.version>4.12.0</okhttp.version>
         <easy-captcha.version>1.6.2</easy-captcha.version>
         <passay.version>1.6.6</passay.version>
         <otp.version>0.4.0</otp.version>
@@ -220,23 +218,6 @@
                         <groupId>org.redisson</groupId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <!-- logback-kafka -->
-            <dependency>
-                <groupId>com.github.danielwegener</groupId>
-                <artifactId>logback-kafka-appender</artifactId>
-                <version>${logback-kafka-appender.version}</version>
-            </dependency>
-            <!-- skywalking -->
-            <dependency>
-                <groupId>org.apache.skywalking</groupId>
-                <artifactId>apm-toolkit-trace</artifactId>
-                <version>${skywalking.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.skywalking</groupId>
-                <artifactId>apm-toolkit-logback-1.x</artifactId>
-                <version>${skywalking.version}</version>
             </dependency>
             <!-- spring boot admin -->
             <dependency>

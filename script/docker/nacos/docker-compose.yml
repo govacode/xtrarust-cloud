@@ -1,0 +1,20 @@
+# docker-compose参考：https://github.com/nacos-group/nacos-docker/blob/master/example/standalone-mysql-5.7.yaml
+# Nacos文档：https://nacos.io/zh-cn/index.html
+services:
+  nacos:
+    image: nacos/nacos-server:v2.3.2
+    container_name: nacos
+    restart: always
+    volumes:
+      - "./logs:/home/nacos/logs"
+      - "./data:/home/nacos/data"
+      - "./conf/application.properties:/home/nacos/conf/application.properties"
+    environment:
+      TZ: Asia/Shanghai
+      MODE: standalone
+      PREFER_HOST_MODE: hostname
+      JVM_XMS: 256m
+      JVM_XMX: 256m
+    ports:
+      - "8848:8848"
+      - "9848:9848"
