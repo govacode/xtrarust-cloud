@@ -1,6 +1,11 @@
 spring:
   application:
     name: app1
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/auth_server?useUnicode=true&characterEncoding=UTF-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=GMT%2B8&allowMultiQueries=true&autoReconnect=true&nullCatalogMeansCurrent=true&rewriteBatchedStatements=true
+    username: root
+    password: root@123
 
 logging:
   file:
@@ -21,7 +26,7 @@ management:
     web:
       base-path: '/actuator'
       exposure:
-        include: health,info,metrics,prometheus
+        include: "health,info,metrics,prometheus"
   otlp:
     metrics:
       export:
@@ -29,6 +34,10 @@ management:
         step: 10s # 每10秒推一次数据
     tracing:
       endpoint: http://localhost:4318/v1/traces
+  metrics:
+    # 确保开启了 hikaricp 的采集
+    enable:
+      hikaricp: true
   tracing:
     sampling:
       probability: 1.0 # 采样率：1.0 表示 100% 采样，生产环境建议降低
