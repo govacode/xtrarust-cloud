@@ -35,15 +35,21 @@ public class SnowflakeTest {
         //   │   ├── t_order_0 到 t_order_15
         //   └── db_3
         //       ├── t_order_0 到 t_order_15
+        final int DB_BITS = 2;       // 2² = 4个库
+        final int TABLE_BITS = 4;    // 2⁴ = 16张表/库
+        final int TABLE_MASK = (1 << TABLE_BITS) - 1;
+
         Set<Long> orderIdSet = Sets.newHashSet();
         for (int i = 0; i < 100_000; i++) { // 10w订单 1w用户 每个用户10个订单
             Long userId = userIds.get(i % 10000);
             long orderId = SnowflakeIdUtil.nextGeneId(6, userId);
             orderIdSet.add(orderId);
 
-            long shard = orderId % 64; // 计算总分片位
-            long db = shard / 16; // 确定数据库 除以每库表数
-            long tb = shard % 16; // 确定表 模每库表数
+            // long shard = orderId & ((1L << 6) - 1); // 计算总分片位 orderId % 64
+            // long db = shard >> 4; // 确定数据库 除以每库表数 shard / 16
+            // long tb = shard & ((1L << 4) - 1); // 确定表 模每库表数 shard % 16
+            long db = (orderId >> TABLE_BITS) & ((1 << DB_BITS) - 1);
+            long tb = orderId & TABLE_MASK;
 
             // 均匀分布
             // {0={0=1570, 1=1570, 2=1570, 3=1570, 4=1570, 5=1570, 6=1570, 7=1570, 8=1570, 9=1570, 10=1570, 11=1570, 12=1570, 13=1570, 14=1570, 15=1570},
