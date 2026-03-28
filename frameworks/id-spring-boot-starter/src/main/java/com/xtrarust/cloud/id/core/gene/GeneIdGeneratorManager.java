@@ -1,6 +1,7 @@
 package com.xtrarust.cloud.id.core.gene;
 
 import com.xtrarust.cloud.id.core.GeneIdGenerator;
+import com.xtrarust.cloud.id.core.snowflake.Snowflake;
 import com.xtrarust.cloud.id.util.SnowflakeIdUtil;
 
 import java.util.Map;
@@ -16,7 +17,10 @@ public final class GeneIdGeneratorManager {
     public static GeneIdGenerator getGeneIdGenerator(long geneBits) {
         return MANAGER.computeIfAbsent(
                 geneBits,
-                k -> new SnowflakeGeneIdGenerator(SnowflakeIdUtil.dataCenterId, SnowflakeIdUtil.workerId, geneBits)
+                k -> {
+                    Snowflake snowflake = SnowflakeIdUtil.getInstance();
+                    return new GeneSnowflake(snowflake.getDataCenterId(), snowflake.getWorkerId(), geneBits);
+                }
         );
     }
 }

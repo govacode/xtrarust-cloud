@@ -2,6 +2,8 @@ package com.xtrarust.cloud.id.core;
 
 /**
  * ID 生成器
+ *
+ * @author gova
  */
 public interface IdGenerator {
 

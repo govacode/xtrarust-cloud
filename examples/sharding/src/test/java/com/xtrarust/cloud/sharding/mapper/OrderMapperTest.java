@@ -50,7 +50,7 @@ class OrderMapperTest {
         Set<Long> orderIdSet = Sets.newHashSet();
         for (int i = 0; i < 10_0000; i++) { // 10w订单 1w用户 每个用户10个订单
             Long userId = userIds.get(i % 10000);
-            long orderId = SnowflakeIdUtil.nextIdByServiceId(2, userId);
+            long orderId = SnowflakeIdUtil.nextGeneId(2, userId);
             orderIdSet.add(orderId);
 
             long shard = orderId % 4;
@@ -80,7 +80,7 @@ class OrderMapperTest {
             List<OrderItem> orderItems = Lists.newArrayList();
 
             Long userId = userIds.get(i % 10000);
-            long orderId = SnowflakeIdUtil.nextIdByServiceId(2, userId);
+            long orderId = SnowflakeIdUtil.nextGeneId(2, userId);
 
             Order order = new Order();
             order.setOrderId(orderId);

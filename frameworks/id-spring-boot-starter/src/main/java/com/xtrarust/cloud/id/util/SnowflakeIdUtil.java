@@ -21,10 +21,10 @@ public final class SnowflakeIdUtil {
     /**
      * 初始化雪花算法
      */
-    public static void initSnowflake(Snowflake snowflake, long dataCenterId, long workerId) {
+    public static void initSnowflake(Snowflake snowflake) {
         SnowflakeIdUtil.snowflake = snowflake;
-        SnowflakeIdUtil.dataCenterId = dataCenterId;
-        SnowflakeIdUtil.workerId = workerId;
+        SnowflakeIdUtil.dataCenterId = snowflake.getDataCenterId();
+        SnowflakeIdUtil.workerId = snowflake.getWorkerId();
     }
 
     /**
@@ -66,15 +66,15 @@ public final class SnowflakeIdUtil {
     /**
      * 根据 {@param serviceId} 生成基因法雪花ID
      */
-    public static long nextIdByServiceId(long geneBits, long serviceId) {
+    public static long nextGeneId(long geneBits, long serviceId) {
         return GeneIdGeneratorManager.getGeneIdGenerator(geneBits).nextId(serviceId);
     }
 
     /**
      * 解析基因法雪花ID
      */
-    public static SnowflakeIdInfo parseSnowflakeServiceId(long geneBits, long snowflakeId) {
-        return GeneIdGeneratorManager.getGeneIdGenerator(geneBits).parseSnowflakeId(snowflakeId);
-    }
+//    public static SnowflakeIdInfo parseSnowflakeServiceId(long geneBits, long snowflakeId) {
+//        return GeneIdGeneratorManager.getGeneIdGenerator(geneBits).parseSnowflakeId(snowflakeId);
+//    }
 
 }
