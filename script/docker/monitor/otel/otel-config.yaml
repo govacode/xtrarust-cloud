@@ -9,15 +9,18 @@ receivers:
 
 # 导出器
 exporters:
-  # 指标导出给 Prometheus
+  # 指标导出至 Prometheus
   prometheus:
     endpoint: "0.0.0.0:8889"
-  # 链路导出给 Tempo (使用 gRPC)
+  # 链路导出至 Tempo (使用 gRPC)
   otlp/tempo:
     endpoint: "tempo:4317"
     tls:
       # 因为是内网 Docker 环境，关闭 TLS 加密验证
       insecure: true
+  # 日志导出至 Loki
+  loki:
+    endpoint: "http://loki:3100/loki/api/v1/push"
 
 processors:
   batch:
@@ -27,17 +30,31 @@ processors:
     timeout: 200ms
     # 批处理的最大限制，防止单次请求过载
     send_batch_max_size: 1500
+  # 资源处理器，把 service.name 映射为 Loki 的标签
+  resource:
+    attributes:
+      - action: insert
+        key: loki.resource.labels
+        value: "service.name, log.level"
+      - action: insert
+        key: exporter
+        value: OTLP
 
 # 服务流水线: 这是“组装线”，将上面的接收器和导出器串联起来
 service:
   pipelines:
     # 指标流水线
     metrics:
-      receivers: [otlp]         # 从 4317/4318 端口接收指标
-      exporters: [prometheus]   # 转换后交给 Prometheus 抓取端点
-      processors: [batch]
+      receivers: [ otlp ]         # 从 4317/4318 端口接收指标
+      exporters: [ prometheus ]   # 转换后交给 Prometheus 抓取端点
+      processors: [ batch ]
     # 链路追踪流水线
     traces:
-      receivers: [otlp]         # 从 4317/4318 端口接收链路
-      exporters: [otlp/tempo]   # 转发给 Tempo 存储
-      processors: [batch]
+      receivers: [ otlp ]         # 从 4317/4318 端口接收链路
+      exporters: [ otlp/tempo ]   # 转发给 Tempo 存储
+      processors: [ batch ]
+    # 日志流水线
+    logs:
+      receivers: [ otlp ]         # 从 4317/4318 端口接收日志
+      exporters: [ loki ]         # 转发给 Loki 存储
+      processors: [resource, batch]

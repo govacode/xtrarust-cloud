@@ -54,7 +54,7 @@
             </dependency>
             <dependency>
                 <groupId>com.xtrarust.cloud</groupId>
-                <artifactId>monitor-spring-boot-starter</artifactId>
+                <artifactId>observability-spring-boot-starter</artifactId>
                 <version>${revision}</version>
             </dependency>
             <dependency>

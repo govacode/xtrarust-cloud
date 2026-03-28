@@ -47,6 +47,7 @@
         <lock4j.version>2.2.7</lock4j.version>
         <!-- 监控相关 -->
         <spring-boot-admin.version>3.5.5</spring-boot-admin.version>
+        <opentelemetry-logback.version>2.26.0-alpha</opentelemetry-logback.version>
         <!-- excel -->
         <poi.version>5.4.1</poi.version>
         <easyexcel.verion>4.0.3</easyexcel.verion>
@@ -229,6 +230,11 @@
                 <groupId>de.codecentric</groupId>
                 <artifactId>spring-boot-admin-starter-client</artifactId>
                 <version>${spring-boot-admin.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.opentelemetry.instrumentation</groupId>
+                <artifactId>opentelemetry-logback-appender-1.0</artifactId>
+                <version>${opentelemetry-logback.version}</version>
             </dependency>
             <!-- excel -->
             <dependency>

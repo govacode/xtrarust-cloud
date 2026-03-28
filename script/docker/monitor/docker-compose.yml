@@ -1,7 +1,7 @@
 services:
   # Prometheus: 指标存储
   prometheus:
-    image: prom/prometheus:v2.53.0
+    image: prom/prometheus:v3.3.1
     container_name: prometheus
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
@@ -15,15 +15,23 @@ services:
 
   # Tempo: 链路存储
   tempo:
-    image: grafana/tempo:2.4.1
+    image: grafana/tempo:2.7.2
     container_name: tempo
-    command: [ "-config.file=/etc/tempo.yaml" ]
+    command: [ "-config.file=/etc/tempo.yaml", "--target=all", "--storage.trace.backend=local", "--storage.trace.local.path=/var/tempo", "--auth.enabled=false" ]
     volumes:
       - ./tempo/tempo.yaml:/etc/tempo.yaml
       - ./tempo/data:/var/tempo
     ports:
       - "3200:3200"   # Tempo API
       - "4317"        # 内部接收 OTEL 转发的 gRPC
+
+  # Loki: 日志存储
+  loki:
+    image: grafana/loki:3.5.0
+    container_name: loki
+    command: -config.file=/etc/loki/local-config.yaml
+    ports:
+      - "3100:3100"
 
   # OpenTelemetry Collector: 统一接收处理
   otel-collector:
@@ -38,10 +46,11 @@ services:
       - "8889:8889" # Prometheus 抓取端口
     depends_on:
       - tempo
+      - loki
 
   # Grafana: 统一展示
   grafana:
-    image: grafana/grafana:11.1.0
+    image: grafana/grafana:12.0.1
     container_name: grafana
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin@123
@@ -55,3 +64,4 @@ services:
     depends_on:
       - prometheus
       - tempo
+      - loki
