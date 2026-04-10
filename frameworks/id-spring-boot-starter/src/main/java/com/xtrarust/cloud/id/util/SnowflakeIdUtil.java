@@ -1,6 +1,8 @@
 package com.xtrarust.cloud.id.util;
 
 import com.xtrarust.cloud.id.core.gene.GeneIdGeneratorManager;
+import com.xtrarust.cloud.id.core.gene.GeneIdInfo;
+import com.xtrarust.cloud.id.core.gene.GeneSnowflake;
 import com.xtrarust.cloud.id.core.snowflake.Snowflake;
 import com.xtrarust.cloud.id.core.snowflake.SnowflakeIdInfo;
 
@@ -73,8 +75,8 @@ public final class SnowflakeIdUtil {
     /**
      * 解析基因法雪花ID
      */
-//    public static SnowflakeIdInfo parseSnowflakeServiceId(long geneBits, long snowflakeId) {
-//        return GeneIdGeneratorManager.getGeneIdGenerator(geneBits).parseSnowflakeId(snowflakeId);
-//    }
+    public static GeneIdInfo parseSnowflakeServiceId(long geneBits, long snowflakeId) {
+        return ((GeneSnowflake) GeneIdGeneratorManager.getGeneIdGenerator(geneBits)).parseSnowflakeId(snowflakeId);
+    }
 
 }

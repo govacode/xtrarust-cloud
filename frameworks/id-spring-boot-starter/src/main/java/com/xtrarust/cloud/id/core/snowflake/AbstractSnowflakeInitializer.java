@@ -24,7 +24,6 @@ public abstract class AbstractSnowflakeInitializer implements SnowflakeInitializ
      */
     @Override
     public void initSnowflake() {
-        // 模板方法模式: 通过抽象方法获取 WorkId 包装器创建雪花算法
         Pair<Long, Long> pair = getWorkerId();
         long dataCenterId = pair.getLeft(), workerId = pair.getRight();
         Snowflake snowflake = new Snowflake(dataCenterId, workerId);
