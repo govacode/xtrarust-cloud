@@ -1,1 +1,1 @@
-com.xtrarust.cloud.id.config.DistributedIdAutoConfiguration
+com.xtrarust.cloud.id.config.SnowflakeAutoConfiguration

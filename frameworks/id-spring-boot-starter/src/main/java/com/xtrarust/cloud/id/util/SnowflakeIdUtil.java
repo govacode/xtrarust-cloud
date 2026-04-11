@@ -47,7 +47,7 @@ public final class SnowflakeIdUtil {
      * 获取雪花算法下一个字符串类型 ID
      */
     public static String nextIdStr() {
-        return Long.toString(nextId());
+        return snowflake.nextIdStr();
     }
 
     /**
@@ -73,7 +73,7 @@ public final class SnowflakeIdUtil {
     }
 
     /**
-     * 解析基因法雪花ID
+     * 解析基因法雪花 ID
      */
     public static GeneIdInfo parseSnowflakeServiceId(long geneBits, long snowflakeId) {
         return ((GeneSnowflake) GeneIdGeneratorManager.getGeneIdGenerator(geneBits)).parseSnowflakeId(snowflakeId);

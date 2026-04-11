@@ -1,4 +1,4 @@
-package com.xtrarust.cloud.id.core.snowflake;
+package com.xtrarust.cloud.id.core.provider;
 
 import cn.hutool.core.collection.CollectionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -6,14 +6,10 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
 
-import java.util.ArrayList;
 import java.util.List;
 
-/**
- * 使用 Redis 获取雪花 workerId
- */
 @Slf4j
-public class RedisSnowflakeInitializer extends AbstractSnowflakeInitializer {
+public class RedisSnowflakeNodeIdProvider implements SnowflakeNodeIdProvider {
 
     private static final String LUA_SCRIPT = """
             local hashKey = KEYS[1]
@@ -48,35 +44,32 @@ public class RedisSnowflakeInitializer extends AbstractSnowflakeInitializer {
             return { resultDataCenterId, resultWorkerId }
             """;
 
-    private static final String SNOWFLAKE_WORKER_ID_KEY = "snowflake_worker_id";
-
     private static final String DATA_CENTER_ID_FIELD = "dataCenterId";
 
     private static final String WORKER_ID_FIELD = "workerId";
 
+    private final String key;
+
     private final StringRedisTemplate stringRedisTemplate;
 
-    private final RandomSnowflakeInitializer randomSnowflakeInitializer = new RandomSnowflakeInitializer();
-
-    public RedisSnowflakeInitializer(StringRedisTemplate stringRedisTemplate) {
+    public RedisSnowflakeNodeIdProvider(String key, StringRedisTemplate stringRedisTemplate) {
+        this.key = key;
         this.stringRedisTemplate = stringRedisTemplate;
     }
 
     @Override
-    @SuppressWarnings("all")
-    public Pair<Long, Long> getWorkerId() {
-        List<Long> luaResultList = null;
+    @SuppressWarnings("unchecked")
+    public Pair<Long, Long> getNodeIdPair() {
+        List<Long> resultList = null;
         try {
-            DefaultRedisScript redisScript = new DefaultRedisScript();
+            DefaultRedisScript<List<Long>> redisScript = new DefaultRedisScript<>();
             redisScript.setScriptText(LUA_SCRIPT);
-            redisScript.setResultType(List.class);
-            luaResultList = (ArrayList) this.stringRedisTemplate.execute(redisScript, List.of(SNOWFLAKE_WORKER_ID_KEY), DATA_CENTER_ID_FIELD, WORKER_ID_FIELD);
+            redisScript.setResultType((Class<List<Long>>) (Class<?>) List.class);
+            resultList = this.stringRedisTemplate.execute(redisScript, List.of(key), DATA_CENTER_ID_FIELD, WORKER_ID_FIELD);
         } catch (Exception e) {
-            log.error("Redis Lua 脚本获取 workerId 失败", e);
+            throw new RuntimeException("Redis Lua 脚本获取 workerId 失败", e);
         }
-        if (CollectionUtil.isNotEmpty(luaResultList)) {
-            return Pair.of(luaResultList.get(0), luaResultList.get(1));
-        }
-        return randomSnowflakeInitializer.getWorkerId();
+        assert CollectionUtil.isNotEmpty(resultList);
+        return Pair.of(resultList.get(0), resultList.get(1));
     }
 }

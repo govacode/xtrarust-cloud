@@ -2,8 +2,10 @@ package com.xtrarust.cloud.id.core.snowflake;
 
 import cn.hutool.core.lang.Assert;
 import com.xtrarust.cloud.id.core.IdGenerator;
+import com.xtrarust.cloud.id.util.SnowflakeIdUtil;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.InitializingBean;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -37,7 +39,7 @@ import java.util.concurrent.atomic.AtomicLong;
  *
  * @author gova
  */
-public class Snowflake implements IdGenerator {
+public class Snowflake implements IdGenerator, InitializingBean {
 
     static {
         EPOCH = LocalDateTime.of(2016, 11, 1, 0, 0, 0)
@@ -185,5 +187,10 @@ public class Snowflake implements IdGenerator {
         long workerId = (snowflakeId >> WORKER_ID_SHIFT) & ~(-1L << WORKER_ID_BITS);
         long sequence = snowflakeId & ~(-1L << SEQUENCE_BITS);
         return new SnowflakeIdInfo(timestamp, dataCenterId, workerId, sequence);
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        SnowflakeIdUtil.initSnowflake(this);
     }
 }
