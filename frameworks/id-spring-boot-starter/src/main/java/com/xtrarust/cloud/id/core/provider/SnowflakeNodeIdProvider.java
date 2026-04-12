@@ -2,6 +2,7 @@ package com.xtrarust.cloud.id.core.provider;
 
 import org.apache.commons.lang3.tuple.Pair;
 
+@FunctionalInterface
 public interface SnowflakeNodeIdProvider {
 
     /**

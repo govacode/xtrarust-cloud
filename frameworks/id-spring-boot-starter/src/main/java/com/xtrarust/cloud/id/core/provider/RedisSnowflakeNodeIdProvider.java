@@ -11,42 +11,40 @@ import java.util.List;
 @Slf4j
 public class RedisSnowflakeNodeIdProvider implements SnowflakeNodeIdProvider {
 
-    private static final String LUA_SCRIPT = """
+    private static final String LUA_SCRIPT = """            
             local hashKey = KEYS[1]
             local dataCenterIdField = ARGV[1]
             local workerIdField = ARGV[2]
+            local maxId = tonumber(ARGV[3]) or 31
             
-            if (redis.call('exists', hashKey) == 0) then
-                redis.call('hincrby', hashKey, dataCenterIdField, 0)
-                redis.call('hincrby', hashKey, workerIdField, 0)
-                return { 0, 0 }
+            -- 初始化或获取当前值
+            local dataCenterId = redis.call('hincrby', hashKey, dataCenterIdField, 0)
+            local workerId = redis.call('hincrby', hashKey, workerIdField, 0)
+            
+            -- 全部用完重置
+            if dataCenterId == maxId and workerId == maxId then
+                redis.call('hset', hashKey, dataCenterIdField, 0)
+                redis.call('hset', hashKey, workerIdField, 0)
+                return {0, 0}
             end
             
-            local dataCenterId = tonumber(redis.call('hget', hashKey, dataCenterIdField))
-            local workerId = tonumber(redis.call('hget', hashKey, workerIdField))
-            
-            local max = 31
-            local resultDataCenterId = 0
-            local resultWorkerId = 0
-            
-            if (dataCenterId == max and workerId == max) then
-                redis.call('hset', hashKey, dataCenterIdField, '0')
-                redis.call('hset', hashKey, workerIdField, '0')
-            elseif (workerId ~= max) then
-                resultDataCenterId = dataCenterId
-                resultWorkerId = redis.call('hincrby', hashKey, workerIdField, 1)
-            elseif (dataCenterId ~= max) then
-                resultDataCenterId = redis.call('hincrby', hashKey, dataCenterIdField, 1)
-                resultWorkerId = 0
-                redis.call('hset', hashKey, workerIdField, '0')
+            -- 递增 workerId
+            if workerId < maxId then
+                workerId = redis.call('hincrby', hashKey, workerIdField, 1)
+                return {dataCenterId, workerId}
             end
             
-            return { resultDataCenterId, resultWorkerId }
+            -- workerId 已满，进位到 datacenterId（此时 dataCenterId 必然 < maxId）
+            dc = redis.call('hincrby', hashKey, dataCenterIdField, 1)
+            redis.call('hset', hashKey, workerIdField, 0)
+            return {dataCenterId, 0}
             """;
 
     private static final String DATA_CENTER_ID_FIELD = "dataCenterId";
 
     private static final String WORKER_ID_FIELD = "workerId";
+
+    private static final String MAX_ID = "31";
 
     private final String key;
 
@@ -65,7 +63,7 @@ public class RedisSnowflakeNodeIdProvider implements SnowflakeNodeIdProvider {
             DefaultRedisScript<List<Long>> redisScript = new DefaultRedisScript<>();
             redisScript.setScriptText(LUA_SCRIPT);
             redisScript.setResultType((Class<List<Long>>) (Class<?>) List.class);
-            resultList = this.stringRedisTemplate.execute(redisScript, List.of(key), DATA_CENTER_ID_FIELD, WORKER_ID_FIELD);
+            resultList = this.stringRedisTemplate.execute(redisScript, List.of(key), DATA_CENTER_ID_FIELD, WORKER_ID_FIELD, MAX_ID);
         } catch (Exception e) {
             throw new RuntimeException("Redis Lua 脚本获取 workerId 失败", e);
         }
