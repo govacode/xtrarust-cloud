@@ -35,7 +35,7 @@ public class RedisSnowflakeNodeIdProvider implements SnowflakeNodeIdProvider {
             end
             
             -- workerId 已满，进位到 datacenterId（此时 dataCenterId 必然 < maxId）
-            dc = redis.call('hincrby', hashKey, dataCenterIdField, 1)
+            dataCenterId = redis.call('hincrby', hashKey, dataCenterIdField, 1)
             redis.call('hset', hashKey, workerIdField, 0)
             return {dataCenterId, 0}
             """;
