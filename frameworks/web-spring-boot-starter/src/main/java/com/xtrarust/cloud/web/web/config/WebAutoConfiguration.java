@@ -5,13 +5,10 @@ import com.xtrarust.cloud.web.web.handler.GlobalExceptionHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
 import org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.client.RestTemplateAutoConfiguration;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -36,7 +33,7 @@ import static org.springframework.boot.autoconfigure.condition.ConditionalOnWebA
  *     encoding: UTF-8
  *     cache-duration: 3600
  *
- * @see org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+ * @see org.springframework.boot.webmvc.autoconfigure.WebMvcAutoConfiguration
  * @see org.springframework.boot.autoconfigure.context.MessageSourceAutoConfiguration
  */
 @AutoConfiguration(before = {WebMvcAutoConfiguration.class, MessageSourceAutoConfiguration.class})
@@ -104,15 +101,5 @@ public class WebAutoConfiguration implements WebMvcConfigurer {
     @Bean
     public GlobalExceptionHandler globalExceptionHandler() {
         return new GlobalExceptionHandler();
-    }
-
-    /**
-     * 创建 RestTemplate 实例
-     *
-     * @param restTemplateBuilder {@link RestTemplateAutoConfiguration#restTemplateBuilder}
-     */
-    @Bean
-    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
-        return restTemplateBuilder.build();
     }
 }

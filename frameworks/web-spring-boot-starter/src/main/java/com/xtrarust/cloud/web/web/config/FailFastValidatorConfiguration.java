@@ -2,13 +2,13 @@ package com.xtrarust.cloud.web.web.config;
 
 import org.hibernate.validator.HibernateValidatorConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.validation.ValidationConfigurationCustomizer;
+import org.springframework.boot.validation.autoconfigure.ValidationConfigurationCustomizer;
 import org.springframework.context.annotation.Bean;
 
 /**
  * 配置 HibernateValidator 快速失败
  *
- * @see org.springframework.boot.autoconfigure.validation.ValidationAutoConfiguration
+ * @see org.springframework.boot.validation.autoconfigure.ValidationAutoConfiguration
  * @author gova
  */
 @AutoConfiguration

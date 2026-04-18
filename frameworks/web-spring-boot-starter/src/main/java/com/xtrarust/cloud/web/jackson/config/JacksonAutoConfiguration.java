@@ -27,7 +27,7 @@ import java.util.List;
  * @author gova
  */
 @Slf4j
-@AutoConfiguration(before = org.springframework.boot.autoconfigure.jackson.JacksonAutoConfiguration.class)
+@AutoConfiguration(before = org.springframework.boot.jackson.autoconfigure.JacksonAutoConfiguration.class)
 public class JacksonAutoConfiguration {
 
     // 注册 AfterburnerModule 提升序列化性能
