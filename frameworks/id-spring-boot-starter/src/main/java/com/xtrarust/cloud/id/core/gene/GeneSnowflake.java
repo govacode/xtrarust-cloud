@@ -3,11 +3,6 @@ package com.xtrarust.cloud.id.core.gene;
 import cn.hutool.core.lang.Assert;
 import com.xtrarust.cloud.id.core.GeneIdGenerator;
 import com.xtrarust.cloud.id.core.snowflake.AbstractSnowflake;
-import lombok.Getter;
-import lombok.SneakyThrows;
-
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * 基因法雪花 ID 生成器<br>
